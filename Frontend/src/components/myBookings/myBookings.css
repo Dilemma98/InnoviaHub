@@ -1,59 +1,65 @@
-.mainContentMyBookings{
-    font-family: 'Inter', sans-serig;
+.mainContentMyBookings {
+    font-family: 'Inter', sans-serif;
     width: 90%;
-    margin-top: 1em;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #e8e8e8;
-    border-radius: 1em;
-    padding: 1em;
+    margin: 1em auto 0 auto;
+    background-color: #CBBFBB;
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 1px !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-.myBookingsHeader{
-    margin-left: 1.3em;
+.myBookingsHeader {
+    margin-left: 10px !important;
+    color: #2e2e2e;
 }
 
-.h2{
-    margin-left: 2.7em;
-    font-size: 1em;
-    color: rgb(95, 95, 95);
+.h2 {
+    margin-left: 10px !important;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2e2e2e;
 }
 
-.myBookedResources{
+.myBookedResources {
     margin-top: 2em;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
     display: flex;
     flex-wrap: wrap;
-    gap: 2em;
+    gap: 1.5rem;
 }
 
-.bookedResourceItem{
+.bookedResourceItem {
     width: 9em;
-    background-color: white;
-    border: 1px solid black;
-    padding: 1em;
-    border-radius: 0.5em;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-.bookingDateTimeInfo{
+.bookingDateTimeInfo {
     display: flex;
     gap: 0.5em;
 }
 
-.unBookBtn{
-    background-color: #d5718c;
-    border: 0.5px solid black;
-    padding: 0.4em;
-    border-radius: 0.5em;
-    margin-top: 0.7em;
-    margin-left: 8.2em;
+.unBookBtn {
+    background-color: #D5718C;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
     cursor: pointer;
-    color:black;
-    font-size: 0.75em;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 0.7em;
 }
 
-.unBookBtn:hover{
-    background-color: #b15b72;
+.unBookBtn:hover {
+    background-color: #F7A072;
 }
