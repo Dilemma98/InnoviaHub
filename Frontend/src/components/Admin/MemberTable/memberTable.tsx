@@ -130,9 +130,7 @@ const MemberTable: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+
 
   if (error) {
     return <p style={{ color: "red" }}>Fel: {error}</p>;
@@ -151,6 +149,11 @@ const MemberTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
+           {loading && (
+            <div className="loadingContainerMembers">
+              <LoadingSpinner />
+            </div>
+          )}
           {members.map((member) => (
             <tr key={member.id}>
               <td>

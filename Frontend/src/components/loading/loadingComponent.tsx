@@ -6,9 +6,7 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner = ({ variant }: LoadingSpinnerProps) => {
   return (
-    <div className={`loader-wrapper ${variant || ""}`}>
       <div className="loader"></div>
-    </div>
   );
 };
 

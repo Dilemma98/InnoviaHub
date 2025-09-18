@@ -43,3 +43,10 @@ td {
 .delete-btn:hover {
   color: red;
 }
+
+.loadingContainerMembers{
+  width: 100%;
+  display: flex;
+  margin-top: 2em;
+  justify-content: center;
+}

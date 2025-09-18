@@ -57,3 +57,8 @@
 .unBookBtn:hover{
     background-color: #b15b72;
 }
+
+.loadingContainerMyBookings{
+    display: flex;
+    justify-content: center;
+}
