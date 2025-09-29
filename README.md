@@ -10,6 +10,9 @@ Built with a React frontend and a .NET 9.0 backend, it offers secure authenticat
 - **Resource Booking**: Users can book and manage available office resources via the dashboard.
 - **Responsive UI**: Built with React and styled with CSS modules.
 
+## Added features 
+- **AI-implementation**
+
 ## Tech Stack
 
 ### Backend
