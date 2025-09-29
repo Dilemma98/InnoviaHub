@@ -65,15 +65,15 @@ namespace InnoviaHub.Controllers
 
             TimeZoneInfo swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
 
-            var startTimeInSweden = TimeZoneInfo.ConvertTime(dto.StartTime, swedishTimeZone);
-            var endTimeInSweden = TimeZoneInfo.ConvertTime(dto.EndTime, swedishTimeZone);
+            var startUtc = dto.StartTime;
+            var endUtc = dto.EndTime;
 
             // Control overlapping
-            if (!_bookingService.IsBookingAvailable(dto.ResourceId, startTimeInSweden, endTimeInSweden))
+            if (!_bookingService.IsBookingAvailable(dto.ResourceId, startUtc, endUtc))
                 return Conflict("Booking overlaps with an existing one.");
 
             var nowInSweden = TimeZoneInfo.ConvertTime(DateTime.Now, swedishTimeZone);
-            if (startTimeInSweden < nowInSweden)
+            if (startUtc < nowInSweden)
                 return BadRequest("Start time must be in the future.");
 
             // Create booking
@@ -82,18 +82,20 @@ namespace InnoviaHub.Controllers
                 UserId = dto.UserId,
                 ResourceId = dto.ResourceId,
                 BookingType = dto.BookingType,
-                StartTime = dto.StartTime.ToUniversalTime(),
-                EndTime = dto.EndTime.ToUniversalTime(),
-                DateOfBooking = DateTime.Now
+                StartTime = startUtc,
+                EndTime = endUtc,
+                DateOfBooking = DateTime.Now,
             };
 
 
             _bookingService.CreateBooking(booking);
-            Console.WriteLine("📡 Sending SignalR update...");
+            Console.WriteLine("📡 Sending SignalR update (Create)...");
             await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate", new BookingUpdate
             {
                 ResourceId = booking.ResourceId,
-                Date = booking.StartTime.ToString("yyyy-MM-dd")
+                Date = booking.StartTime.ToString("yyyy-MM-dd"),
+                Start = booking.StartTime,
+                End = booking.EndTime
             });
 
             return Ok(booking);
@@ -111,11 +113,14 @@ namespace InnoviaHub.Controllers
             if (!_bookingService.DeleteBooking(id))
                 return NotFound();
 
-            // To update with signalR when deleteBooking
+            Console.WriteLine("📡 Sending SignalR update (Delete)...");
             await _hubContext.Clients.All.SendAsync("ReceiveBookingUpdate", new BookingUpdate
             {
+                BookingId = booking.BookingId,
                 ResourceId = booking.ResourceId,
-                Date = booking.StartTime.ToString("yyyy-MM-dd")
+                Date = booking.StartTime.ToString("yyyy-MM-dd"),
+                Start = booking.StartTime,
+                End = booking.EndTime
             });
 
             return NoContent();
@@ -145,7 +150,16 @@ namespace InnoviaHub.Controllers
                 return StatusCode(500, "Could not find the Swedish time zone on this system.");
             }
 
-            var nowInSweden = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
+            // var nowInSweden = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
+            //Mockad tid
+            var nowInSweden = new DateTime(
+                DateTime.Today.Year,
+                DateTime.Today.Month,
+                DateTime.Today.Day,
+                13, 0, 0
+            ).AddDays(1);
+
+            var nowUtc = TimeZoneInfo.ConvertTimeToUtc(nowInSweden, swedishTimeZone);
 
             var resources = _context.Resources
                 .Include(r => r.Timeslots)
@@ -157,12 +171,13 @@ namespace InnoviaHub.Controllers
                     g => g.Key.ToString(),
                     g => g.Count(r =>
                         !_context.Bookings.Any(b =>
-                            b.ResourceId == r.ResourceId &&
-                            b.StartTime <= nowInSweden &&
-                            b.EndTime > nowInSweden
+                        b.ResourceId == r.ResourceId &&
+                        b.StartTime <= nowUtc &&
+                        b.EndTime > nowUtc
                         )
                     )
                 );
+
 
             return Ok(availability);
         }

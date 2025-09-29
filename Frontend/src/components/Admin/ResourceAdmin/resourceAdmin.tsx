@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import "./resourceAdmin.css";
+import useSignalr from "../../../hooks/useSignalR";
 import { BASE_URL } from "../../../config";
 import LoadingSpinner from "../../loading/loadingComponent";
 
@@ -8,11 +9,18 @@ type BookingType = "Desk" | "VRHeadset" | "MeetingRoom" | "AIServer";
 interface Resource {
   resourceId: number;
   resourceName: string;
-  resourceType: number; // enum som nummer från backend
+  resourceType: number;
   capacity: number;
+  timeslots: Timeslot[];
 }
 
-// Lista för <select> och vy-knappar
+interface Timeslot {
+  timeslotId: number;
+  startTime: string;
+  endTime: string;
+  isBooked: boolean;
+}
+
 const resourceTypes: { key: BookingType; label: string }[] = [
   { key: "Desk", label: "Skrivbord" },
   { key: "VRHeadset", label: "VR-Headset" },
@@ -20,15 +28,13 @@ const resourceTypes: { key: BookingType; label: string }[] = [
   { key: "AIServer", label: "AI-Server" },
 ];
 
-// Mappa backend enum-nummer → key (BookingType string)
 const enumNumberToKey: Record<number, BookingType> = {
-  0: "MeetingRoom",  // exempel: backend enum = 0 för MeetingRoom
+  0: "MeetingRoom",
   1: "Desk",
   2: "VRHeadset",
   3: "AIServer",
 };
 
-// Mappa backend enum-nummer → label
 const enumNumberToLabel: Record<number, string> = {
   0: "Mötesrum",
   1: "Skrivbord",
@@ -36,7 +42,6 @@ const enumNumberToLabel: Record<number, string> = {
   3: "AI-Server",
 };
 
-// Mappa BookingType string → enum-nummer för POST
 const enumMap: Record<BookingType, number> = {
   Desk: 1,
   VRHeadset: 2,
@@ -44,20 +49,16 @@ const enumMap: Record<BookingType, number> = {
   AIServer: 3,
 };
 
-
-
 export default function ResourceAdmin() {
-  const [selectedType, setSelectedType] = useState<BookingType>("Desk"); // vy
-  const [selectedTypeForAdd, setSelectedTypeForAdd] = useState<BookingType>("Desk"); // lägg-till
+  const [selectedType, setSelectedType] = useState<BookingType>("Desk");
+  const [selectedTypeForAdd, setSelectedTypeForAdd] = useState<BookingType>("Desk");
   const [resources, setResources] = useState<Resource[]>([]);
   const [newResource, setNewResource] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    loadResources();
-  }, []);
-
-  async function loadResources() {
+  // Funktion för att ladda resurser
+  const loadResources = useCallback(async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BASE_URL}AdminResource`, {
@@ -68,43 +69,47 @@ export default function ResourceAdmin() {
         },
       });
       const data: Resource[] = await res.json();
-      setResources(data);
+      setResources(data.map(r => ({ ...r, timeslots: r.timeslots || [] })));
     } catch (error) {
       console.error("Kunde inte ladda resurser:", error);
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  async function handleAdd() {
-    if (!newResource.trim() || selectedTypeForAdd === undefined) return;
+  // Initial laddning
+  useEffect(() => {
+    loadResources();
+  }, [loadResources]);
 
+  // SignalR realtidsuppdatering
+  useSignalr(() => {
+    loadResources();
+  }, "all-resources");
+
+  const handleAdd = async () => {
+    if (!newResource.trim()) return;
     const body = {
       resourceId: 0,
       resourceName: newResource,
-      resourceType: enumMap[selectedTypeForAdd], // nummer
+      resourceType: enumMap[selectedTypeForAdd],
       capacity: 1,
-      timeslots: [],
     };
-
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${BASE_URL}AdminResource`, {
         method: "POST",
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json" 
-      },
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(body),
       });
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Error adding resource:", errorText);
         alert("Kunde inte lägga till resurs: " + errorText);
         return;
       }
-
       setNewResource("");
       loadResources();
     } catch (error) {
@@ -113,24 +118,20 @@ export default function ResourceAdmin() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleDelete(id: number) {
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Är du säker på att du vill ta bort resursen?")) return;
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${BASE_URL}AdminResource/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error("Kunde inte ta bort resurs: " + errorText);
       }
-      
       loadResources();
     } catch (error) {
       console.error("Kunde inte ta bort resurs:", error);
@@ -138,38 +139,28 @@ export default function ResourceAdmin() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  // Filtrera resurser för den valda vy-knappen
-  const extractNumber = (name: string): number => {
-  const match = name.match(/\d+/);
-  return match ? parseInt(match[0], 10) : 0;
-};
+  const extractNumber = (name: string) => {
+    const match = name.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
 
-const filteredResources = resources
-  .filter((res) => enumNumberToKey[res.resourceType] === selectedType)
-  .sort((a, b) => {
-    const nameA = a.resourceName.toLowerCase();
-    const nameB = b.resourceName.toLowerCase();
-
-    // Extract number from name for sorting
-    const numA = extractNumber(nameA);
-    const numB = extractNumber(nameB);
-
-    // If both contain numbers, sort numerically
-    if (numA && numB) {
-      return numA - numB;
-    }
-
-    // Else, sort alfabetically
-    return nameA.localeCompare(nameB);
-  });
+  const filteredResources = resources
+    .filter((res) => enumNumberToKey[res.resourceType] === selectedType)
+    .sort((a, b) => {
+      const nameA = a.resourceName.toLowerCase();
+      const nameB = b.resourceName.toLowerCase();
+      const numA = extractNumber(nameA);
+      const numB = extractNumber(nameB);
+      if (numA && numB) return numA - numB;
+      return nameA.localeCompare(nameB);
+    });
 
   return (
     <div className="resource-admin">
       <h2>Resurshantering</h2>
 
-      {/* Vy-knappar */}
       <div className="type-buttons">
         {resourceTypes.map((type) => (
           <button
@@ -182,7 +173,6 @@ const filteredResources = resources
         ))}
       </div>
 
-      {/* Lägg till resurs */}
       <div className="add-resource">
         <input
           type="text"
@@ -190,36 +180,83 @@ const filteredResources = resources
           value={newResource}
           onChange={(e) => setNewResource(e.target.value)}
         />
-
         <select
           value={selectedTypeForAdd}
           onChange={(e) => setSelectedTypeForAdd(e.target.value as BookingType)}
         >
           {resourceTypes.map((type) => (
-            <option key={type.key} value={type.key}>
-              {type.label}
-            </option>
+            <option key={type.key} value={type.key}>{type.label}</option>
           ))}
         </select>
-
         <button onClick={handleAdd}>➕ Lägg till</button>
       </div>
+
       {loading && (
         <div className="loadingContainerResources">
           <LoadingSpinner />
         </div>
       )}
-      {/* Lista över resurser */}
+
       <div className="resource-grid">
         {filteredResources.map((res) => (
           <div key={res.resourceId} className="resource-card">
             <h3>{res.resourceName}</h3>
             <p>Typ: {enumNumberToLabel[res.resourceType]}</p>
-            <p>Status: (kapacitet: {res.capacity})</p>
+
+            <div style={{ marginTop: "6px" }}>
+              Status:{" "}
+              {res.capacity > 0 ? (
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "12px",
+                    height: "12px",
+                    marginLeft: "0.5em",
+                    borderRadius: "50%",
+                    backgroundColor: "green",
+                  }}
+                  title={`Ledig kapacitet: ${res.capacity}`}
+                />
+              ) : (
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "12px",
+                    height: "12px",
+                    marginLeft: "0.5em",
+                    borderRadius: "50%",
+                    backgroundColor: "red",
+                  }}
+                  title="Fullbokad"
+                />
+              )}
+            </div>
+
+            <div style={{ marginTop: "6px" }}>
+              Slots:
+              {res.timeslots.length > 0 ? (
+                <span style={{
+                  display: "inline-block",
+                  width: "12px",
+                  height: "12px",
+                  marginLeft: "0.5em",
+                  borderRadius: "50%",
+                  backgroundColor: "green",
+                }} title={`${res.timeslots.length} timeslots`} />
+              ) : (
+                <span style={{
+                  display: "inline-block",
+                  width: "12px",
+                  height: "12px",
+                  marginLeft: "0.5em",
+                  borderRadius: "50%",
+                  backgroundColor: "red",
+                }} title="Inga timeslots" />
+              )}
+            </div>
+
             <div className="actions">
-              <button className="delete" onClick={() => handleDelete(res.resourceId)}>
-                🗑️ Ta bort
-              </button>
+              <button className="delete" onClick={() => handleDelete(res.resourceId)}>🗑️ Ta bort</button>
             </div>
           </div>
         ))}

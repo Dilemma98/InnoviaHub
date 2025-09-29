@@ -43,7 +43,7 @@ const OverviewCard = () => {
       .catch(err => console.error("SignalR connection error:", err));
 
     // Lyssna på uppdateringar
-    connection.on("RecieveBookingUpdate", () => {
+    connection.on("ReceiveBookingUpdate", () => {
       fetch(`${BASE_URL}Booking/ResourceAvailability`)
         .then(res => res.json())
         .then(data => setStatus(data))

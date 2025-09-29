@@ -1,4 +1,7 @@
 using System;
+using Backend.Data;
+using InnoviaHub.Models;
+using System.Linq;
 
 namespace Backend.Data
 {
@@ -6,7 +9,7 @@ namespace Backend.Data
     {
         public static void SeedTimeslots(InnoviaHubDB context)
         {
-            // If timeslots already exist, do nothing
+            // Om timeslots redan finns, gör inget
             if (context.Timeslots.Any()) return;
 
             var resources = context.Resources.ToList();
@@ -21,34 +24,23 @@ namespace Backend.Data
 
                 while (currentDate <= endDate)
                 {
-                    // Skip weekends
                     if (currentDate.DayOfWeek != DayOfWeek.Saturday &&
                         currentDate.DayOfWeek != DayOfWeek.Sunday)
                     {
-                        // Define 8am local time
-                        var localStart = new DateTime(
-                            currentDate.Year,
-                            currentDate.Month,
-                            currentDate.Day,
-                            8, 0, 0,
-                            DateTimeKind.Unspecified);
-
-                        var localEnd = localStart.AddHours(10); // 08 → 18
-
-                        // Convert to UTC
-                        var startTimeUtc = TimeZoneInfo.ConvertTimeToUtc(localStart, tz);
-                        var endTimeUtc = TimeZoneInfo.ConvertTimeToUtc(localEnd, tz);
-
-                        while (startTimeUtc < endTimeUtc)
+                        for (int hour = 8; hour < 18; hour += 2)
                         {
+                            // Skapa start och end i svensk tid, utan Kind
+                            var localStart = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, hour, 0, 0, DateTimeKind.Unspecified);
+                            var localEnd = localStart.AddHours(2);
+
+
                             context.Timeslots.Add(new Timeslot
                             {
                                 ResourceId = resource.ResourceId,
-                                StartTime = startTimeUtc,
-                                EndTime = startTimeUtc.AddHours(2)
+                                StartTime = TimeZoneInfo.ConvertTimeToUtc(localStart, tz), // konvertera en gång
+                                EndTime = TimeZoneInfo.ConvertTimeToUtc(localEnd, tz),
+                                IsBooked = false
                             });
-
-                            startTimeUtc = startTimeUtc.AddHours(2);
                         }
                     }
 

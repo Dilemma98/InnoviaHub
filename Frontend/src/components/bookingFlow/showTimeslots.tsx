@@ -5,8 +5,8 @@ import { BASE_URL } from "../../config";
 
 export type Timeslot = {
   timeslotId: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // UTC
+  endTime: string;   // UTC
   isBooked: boolean;
   resourceId: number;
 };
@@ -27,15 +27,13 @@ const ShowAvailableTimeslots = ({
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Definiera fetchTimeslots med useCallback
+  // Fetch timeslots
   const fetchTimeslots = useCallback(() => {
     if (!resourceId || !date) return;
 
     const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
       .toString()
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-
-    console.log("🔄 Fetching timeslots for", resourceId, formattedDate);
 
     fetch(`${BASE_URL}Timeslot/resources/${resourceId}/timeslots?date=${formattedDate}`)
       .then(res => {
@@ -46,16 +44,19 @@ const ShowAvailableTimeslots = ({
       .catch(err => setError(err.message));
   }, [resourceId, date]);
 
-  // Skapa en ref för att alltid ha senaste fetchTimeslots
   const fetchTimeslotsRef = useRef(fetchTimeslots);
   useEffect(() => {
     fetchTimeslotsRef.current = fetchTimeslots;
   }, [fetchTimeslots]);
 
-  // Use useSignalr and call fetchTimeslots via ref
+  // SignalR – endast fetch om update gäller denna resurs & dag
   useSignalr((update: any) => {
-    console.log("♥️ ShowAvailableTimeslots SignalR callback:", update);
-    if (fetchTimeslotsRef.current) {
+    if (!resourceId || !date) return;
+    const updateDate = new Date(update.date + "T00:00:00Z");
+    if (update.resourceId === resourceId &&
+        updateDate.getUTCFullYear() === date.getFullYear() &&
+        updateDate.getUTCMonth() === date.getMonth() &&
+        updateDate.getUTCDate() === date.getDate()) {
       fetchTimeslotsRef.current();
     }
   }, `${resourceId}-${date.toDateString()}`);
@@ -64,14 +65,23 @@ const ShowAvailableTimeslots = ({
     fetchTimeslots();
   }, [fetchTimeslots]);
 
+  // Konvertera UTC → svensk tid
+  const formatTime = (utcTime: string) => {
+    const date = new Date(utcTime + "Z");
+    return date.toLocaleTimeString("sv-SE", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Europe/Stockholm",
+    });
+  };
+
   return (
     <div>
       <h2>Tillgängliga tider</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <ul className="timeslotHolder">
         {timeslots.map(slot => {
-          const start = new Date(slot.startTime);
-          const end = new Date(slot.endTime);
           const isSelected = selectedTimeslot?.timeslotId === slot.timeslotId;
           const isDisabled = slot.isBooked;
 
@@ -81,9 +91,7 @@ const ShowAvailableTimeslots = ({
               className={`timeslotItem ${isSelected ? "selected" : ""} ${isDisabled ? "booked" : ""}`}
               onClick={() => { if (!isDisabled) setSelectedTimeslot(slot); }}
             >
-              {start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
-              {end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}{" "}
-              {isDisabled && " (Bokad)"}
+              {formatTime(slot.startTime)} - {formatTime(slot.endTime)} {isDisabled && "(Bokad)"}
             </li>
           );
         })}

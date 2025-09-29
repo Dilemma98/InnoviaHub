@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR;
 using InnoviaHub.Models;
 

@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 interface User {
   email: string;
   isAdmin: boolean;
+  firstName: string;
 }
 
 const StartPage = () => {

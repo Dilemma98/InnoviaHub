@@ -42,13 +42,16 @@ const BookingsAdmin = () => {
 
         // Sort after date and time
         const mapped: Booking[] = data
-          .map((b: any) => ({
-            bookingId: b.bookingId,
-            resourceName: b.resourceName,
-            memberName: b.memberName,
-            startTime: new Date(b.startTime),
-            endTime: new Date(b.endTime),
-          } as BookingWithDates))
+          .map(
+            (b: any) =>
+            ({
+              bookingId: b.bookingId,
+              resourceName: b.resourceName,
+              memberName: b.memberName,
+              startTime: new Date(b.startTime.endsWith("Z") ? b.startTime : b.startTime + "Z"),
+              endTime: new Date(b.endTime.endsWith("Z") ? b.endTime : b.endTime + "Z"),
+            } as BookingWithDates)
+          )
           .sort(
             (a: BookingWithDates, b: BookingWithDates) =>
               a.startTime.getTime() - b.startTime.getTime()
@@ -57,10 +60,21 @@ const BookingsAdmin = () => {
             bookingId: b.bookingId,
             resourceName: b.resourceName,
             memberName: b.memberName,
-            date: b.startTime.toLocaleDateString(),
-            time: `${b.startTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${b.endTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+            date: b.startTime.toLocaleDateString("sv-SE", {
+              timeZone: "Europe/Stockholm",
+            }),
+            time: `${b.startTime.toLocaleTimeString("sv-SE", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+              timeZone: "Europe/Stockholm",
+            })} - ${b.endTime.toLocaleTimeString("sv-SE", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+              timeZone: "Europe/Stockholm",
+            })}`,
           }));
-
 
         setBookings(mapped);
       } catch (err: any) {

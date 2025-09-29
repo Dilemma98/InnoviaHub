@@ -44,22 +44,21 @@ const ConfirmBooking = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-const channelKey = `${selectedResourceId}-${selectedDate.getFullYear()}-${selectedDate.getMonth()+1}-${selectedDate.getDate()}`;
+  const channelKey = `${selectedResourceId}-${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
 
-useSignalr((update: any) => {
+  useSignalr((update: any) => {
+    const updateDate = new Date(update.date + "T00:00:00Z");
+    const selectedDay = new Date(selectedDate);
 
-  const updateDate = new Date(update.date + "T00:00:00Z");
-  const selectedDay = new Date(selectedDate);
-
-  if (
-    update.resourceId === selectedResourceId &&
-    updateDate.getUTCFullYear() === selectedDay.getUTCFullYear() &&
-    updateDate.getUTCMonth() === selectedDay.getUTCMonth() &&
-    updateDate.getUTCDate() === selectedDay.getUTCDate()
-  ) {
-    refreshTimeslots();
-  }
-}, channelKey);
+    if (
+      update.resourceId === selectedResourceId &&
+      updateDate.getUTCFullYear() === selectedDay.getUTCFullYear() &&
+      updateDate.getUTCMonth() === selectedDay.getUTCMonth() &&
+      updateDate.getUTCDate() === selectedDay.getUTCDate()
+    ) {
+      refreshTimeslots();
+    }
+  }, channelKey);
 
   // gets correct bookingTypeNumber for resource
   const getBookingTypeForResource = (resourceId: number) => {
@@ -71,16 +70,29 @@ useSignalr((update: any) => {
       default: return 0;
     }
   };
+    // Fixad svensk tidskonvertering
+  const formatTime = (utcTime: string) => {
+  const date = new Date(utcTime + 'Z');
+  return date.toLocaleTimeString("sv-SE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Europe/Stockholm"
+  });
+};
 
   const CompleteBooking = () => {
-    setLoading(true); // start spinner
+    
+    setLoading(true);
+    // const start = new Date(selectedTimeslot.startTime);
+    // const end = new Date(selectedTimeslot.endTime);
 
     const bookingData = {
       resourceId: selectedResourceId,
       bookingType: getBookingTypeForResource(selectedResourceId),
-      startTime: new Date(selectedTimeslot.startTime + "Z").toISOString(),
-      endTime: new Date(selectedTimeslot.endTime + "Z").toISOString(),
-      userId: user.id
+      startTime: selectedTimeslot.startTime,
+      endTime: selectedTimeslot.endTime, 
+      userId: user.id,
     };
 
     fetch(`${BASE_URL}Booking`, {
@@ -96,7 +108,8 @@ useSignalr((update: any) => {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
+        console.log("Tid för bokning: ", data.startTime, " till ", data.endTime);
+        console.log("Status: ", bookingData);
         refreshTimeslots();
         setShowConfirmation(true);
       })
@@ -116,15 +129,7 @@ useSignalr((update: any) => {
           <p>
             Tid för bokning:{" "}
             <b>
-              {new Date(selectedTimeslot.startTime).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              -{" "}
-              {new Date(selectedTimeslot.endTime).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+              {formatTime(selectedTimeslot.startTime)} - {formatTime(selectedTimeslot.endTime)}
             </b>
           </p>
           <p>

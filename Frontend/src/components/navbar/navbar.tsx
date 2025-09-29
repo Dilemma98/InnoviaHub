@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [user, setUser] = useState<{ isAdmin: boolean; email: string } | null>(
+  const [user, setUser] = useState<{ isAdmin: boolean; email: string; } | null>(
     null
   );
   const updateUser = () => {
@@ -59,6 +59,9 @@ const Navbar = () => {
             )}
             <li>
               <SignOutBtn />
+              {/* <div className="userInfo">
+                {user.firstName}
+              </div> */}
             </li>
           </>
         )}
