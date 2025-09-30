@@ -6,7 +6,8 @@ Built with a React frontend and a .NET 9.0 backend, it offers secure authenticat
 ## Features
 
 - **User Registration & Authentication**: Secure sign-up and login with JWT tokens.
-- **Admin Controls**: Manage users and resources via dedicated admin endpoints.
+- **Admin Controls**: Manage users and resources via dedicated admin endpoints.  
+  > Admin login credentials are provided separately to the course instructor.
 - **Resource Booking**: Users can book and manage available office resources via the dashboard.
 - **Responsive UI**: Built with React and styled with CSS modules.
 
@@ -43,8 +44,45 @@ Built with a React frontend and a .NET 9.0 backend, it offers secure authenticat
 
 ### Prerequisites
 
-- [.NET SDK 9.0](https://dotnet.microsoft.com/download/dotnet/9.0)
+- **[.NET SDK 9.0](https://dotnet.microsoft.com/download/dotnet/9.0)**
 
+- **ENV-variables**  
+  In the root of your backend folder, create a new file and name it `.env`.  
+  Also, make sure to add `.env` to your `.gitignore`.
+
+#### JWT_SECRET
+
+1. Generate a JWT secret key.
+
+   - **Linux / macOS**  
+     Open your terminal and run:  
+     ```bash
+     openssl rand -hex 32
+     ```
+
+   - **Windows (PowerShell)**  
+     Open PowerShell and run:  
+     ```powershell
+     [guid]::NewGuid().ToString("N")
+     ```
+
+2. This will generate a random key. Place it in your `.env` file like this:
+
+JWT_SECRET = "your_generated_jwt_token"
+
+#### OPEN_AI_KEY
+1. Go to [OpenAI’s API Keys page](https://platform.openai.com/account/api-keys).
+(You need an OpenAI account to access this page.)
+
+2. Click on **“Create new secret key”** and copy the generated key.  
+   > ⚠️ You will only see the key once — make sure to copy and save it securely.
+
+3. Place the key in your `.env` file like this:
+
+OPENAI_API_KEY = "your_generated_openai_api_key"
+ > ⚠️ Never commit your API key to version control. Keep it safe and only share it via environment variables or secret managers.
+
+------
 ### Backend Setup
 
 1. **Clone the repository:**

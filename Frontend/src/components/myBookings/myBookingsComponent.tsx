@@ -110,7 +110,7 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
       .catch((err) => console.error("SignalR error:", err));
 
     connection.on("ReceiveBookingUpdate", (update: { BookingId: number }) => {
-      // ta bort bokningen live när backend skickar uppdatering
+      // Remove booking live from UI when backend sends update
       setBookings((prev) => prev.filter((b) => b.bookingId !== update.BookingId));
     });
 
@@ -161,9 +161,9 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
                 </div>
 
                 <UnBookBtn 
-  booking={booking} 
-  onDeleted={(id) => setBookings(prev => prev.filter(b => b.bookingId !== id))} 
-/>
+                  booking={booking} 
+                  onDeleted={(id) => setBookings(prev => prev.filter(b => b.bookingId !== id))} 
+                />
               </li>
             );
           })}

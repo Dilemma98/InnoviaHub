@@ -150,14 +150,17 @@ namespace InnoviaHub.Controllers
                 return StatusCode(500, "Could not find the Swedish time zone on this system.");
             }
 
-            // var nowInSweden = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
-            //Mockad tid
-            var nowInSweden = new DateTime(
-                DateTime.Today.Year,
-                DateTime.Today.Month,
-                DateTime.Today.Day,
-                13, 0, 0
-            ).AddDays(1);
+            var nowInSweden = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
+
+            // Mocked time
+            // var nowInSweden = new DateTime(
+            //     DateTime.Today.Year,
+            //     DateTime.Today.Month,
+            // Exact time of day
+            //     DateTime.Today.Day,
+            //     13, 0, 0
+            //Days from now
+            // ).AddDays(1);
 
             var nowUtc = TimeZoneInfo.ConvertTimeToUtc(nowInSweden, swedishTimeZone);
 

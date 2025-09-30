@@ -3,7 +3,8 @@ import { BASE_URL } from "../../config";
 
 interface UnBookBtnProps {
   booking: { bookingId: number; resourceId: number };
-  onDeleted: (id: number) => void; // skickar tillbaka till parent
+  // Send back to parent to remove from list (myBookingsComponent)
+  onDeleted: (id: number) => void;
 }
 
 const UnBookBtn = ({ booking, onDeleted }: UnBookBtnProps) => {
@@ -12,7 +13,7 @@ const UnBookBtn = ({ booking, onDeleted }: UnBookBtnProps) => {
       const res = await fetch(`${BASE_URL}Booking/${booking.bookingId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Kunde inte ta bort bokning");
       
-      // ✅ Ta bort direkt i UI
+      // Remove live from UI
       onDeleted(booking.bookingId);
     } catch (err) {
       console.error(err);
