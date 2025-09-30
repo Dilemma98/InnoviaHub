@@ -3,6 +3,16 @@
 InnoviaHub is a full-stack web application, built to streamline booking office resources and user managment.
 Built with a React frontend and a .NET 9.0 backend, it offers secure authentication, JWT-based sessions, and API endpoints for managing users and various resources.
 
+### Contributors
+This project was originally developed as a group effort by:
+- [Isabel Demirel](https://github.com/pixabel)
+- [Robin Brink](https://github.com/Brinkentosh)
+- [Emma Högdal](https://github.com/Dilemma98)
+
+The `main` branch reflects the group project.
+
+The `mainV2` branch is an individual continuation and further development by [Emma Högdal](https://github.com/Dilemma98).
+
 ## Features
 
 - **User Registration & Authentication**: Secure sign-up and login with JWT tokens.
