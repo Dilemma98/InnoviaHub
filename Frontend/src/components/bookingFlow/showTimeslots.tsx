@@ -54,9 +54,9 @@ const ShowAvailableTimeslots = ({
     if (!resourceId || !date) return;
     const updateDate = new Date(update.date + "T00:00:00Z");
     if (update.resourceId === resourceId &&
-        updateDate.getUTCFullYear() === date.getFullYear() &&
-        updateDate.getUTCMonth() === date.getMonth() &&
-        updateDate.getUTCDate() === date.getDate()) {
+      updateDate.getUTCFullYear() === date.getFullYear() &&
+      updateDate.getUTCMonth() === date.getMonth() &&
+      updateDate.getUTCDate() === date.getDate()) {
       fetchTimeslotsRef.current();
     }
   }, `${resourceId}-${date.toDateString()}`);
@@ -83,15 +83,24 @@ const ShowAvailableTimeslots = ({
       <ul className="timeslotHolder">
         {timeslots.map(slot => {
           const isSelected = selectedTimeslot?.timeslotId === slot.timeslotId;
-          const isDisabled = slot.isBooked;
+          const isBooked = slot.isBooked;
+          const now = new Date();
+          const slotStart = new Date(slot.startTime + "Z");
+          const isPast = slotStart < now;
+
+          let itemClass = "timeslotItem";
+          if (isSelected) itemClass += " selected";
+          if (isBooked) itemClass += " booked";
+          else if (isPast) itemClass += " past";
 
           return (
             <li
               key={slot.timeslotId}
-              className={`timeslotItem ${isSelected ? "selected" : ""} ${isDisabled ? "booked" : ""}`}
-              onClick={() => { if (!isDisabled) setSelectedTimeslot(slot); }}
+              className={itemClass}
+              onClick={() => { if (!isBooked && !isPast) setSelectedTimeslot(slot); }}
+              style={(isBooked || isPast) ? { pointerEvents: "none" } : {}}
             >
-              {formatTime(slot.startTime)} - {formatTime(slot.endTime)} {isDisabled && "(Bokad)"}
+              {formatTime(slot.startTime)} - {formatTime(slot.endTime)} {isBooked && "(Bokad)"} {isPast && ""}
             </li>
           );
         })}

@@ -28,6 +28,11 @@ li{
   cursor: not-allowed !important;
   opacity: 0.6 !important;
 }
+.timeslotItem.past {
+  background: #8f8f8fbe;
+  color: #000000;
+  text-decoration: line-through;
+}
 
 .loadingContainerTimeslots{
     margin-left: 45%;
