@@ -5,7 +5,7 @@ import { BASE_URL } from "../../config";
 import LoadingSpinner from "../loading/loadingComponent";
 
 // Replace /api to /bookinghub
-const hubUrl = "https://backend20250901141037.azurewebsites.net/bookinghub";
+const hubUrl = BASE_URL.replace('/api/', '') + '/bookinghub';
 
 
 interface ResourceStatus {
@@ -25,14 +25,14 @@ const OverviewCard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     setLoading(true);
-    // Hämta initial data från backend
+    // Get initial data from backend
     fetch(`${BASE_URL}Booking/ResourceAvailability`)
       .then(res => res.json())
       .then(data => setStatus(data))
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
 
-    // Koppla upp SignalR
+    // Start SignalR connection
     const connection: HubConnection = new HubConnectionBuilder()
       .withUrl(`${hubUrl}`)
       .withAutomaticReconnect()
@@ -42,7 +42,7 @@ const OverviewCard = () => {
       .then(() => console.log("Connected to SignalR hub"))
       .catch(err => console.error("SignalR connection error:", err));
 
-    // Lyssna på uppdateringar
+    // Listen to updates
     connection.on("ReceiveBookingUpdate", () => {
       fetch(`${BASE_URL}Booking/ResourceAvailability`)
         .then(res => res.json())

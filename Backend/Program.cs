@@ -8,7 +8,7 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using InnoviaHub.Hubs;
-using DotNetEnv;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +63,20 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
+//----Add OpenAI----
+// Add HttpClient and name it "OpenAI" and setup the client, base address, authorization and content type
+builder.Services.AddHttpClient("OpenAI", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/responses");
+    // Fetch API key from environment variable
+    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+    // Use variable apiKey to authorize the connection
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Berarer", apiKey);
+    // Set what type of content we want to send
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
+//----End OpenAI----
 
 builder.Services.AddSwaggerGen(c =>
 {
