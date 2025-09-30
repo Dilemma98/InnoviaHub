@@ -70,29 +70,29 @@ const ConfirmBooking = ({
       default: return 0;
     }
   };
-    // Fixad svensk tidskonvertering
+  // Fixad svensk tidskonvertering
   const formatTime = (utcTime: string) => {
-  const date = new Date(utcTime + 'Z');
-  return date.toLocaleTimeString("sv-SE", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "Europe/Stockholm"
-  });
-};
+    const date = new Date(utcTime + 'Z');
+    return date.toLocaleTimeString("sv-SE", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Europe/Stockholm"
+    });
+  };
 
   const CompleteBooking = () => {
-    
+
     setLoading(true);
     // const start = new Date(selectedTimeslot.startTime);
     // const end = new Date(selectedTimeslot.endTime);
 
     const bookingData = {
-      resourceId: selectedResourceId,
-      bookingType: getBookingTypeForResource(selectedResourceId),
-      startTime: selectedTimeslot.startTime,
-      endTime: selectedTimeslot.endTime, 
       userId: user.id,
+      resourceId: selectedResourceId,
+      bookingType: getBookingTypeForResource(selectedResourceId), // måste vara ett värde som backend förstår
+      startTime: selectedTimeslot.startTime, // ISO-format, t.ex. "2025-09-30T10:00:00"
+      endTime: selectedTimeslot.endTime      // ISO-format
     };
 
     fetch(`${BASE_URL}Booking`, {

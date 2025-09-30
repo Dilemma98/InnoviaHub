@@ -1,8 +1,10 @@
 import * as signalR from "@microsoft/signalr";
-import { BASE_URL } from "../config";
 
-// Replace /api to /bookinghub
-const hubUrl = BASE_URL.replace('/api/', '') + '/bookinghub';
+// DEV
+const hubUrl = "http://localhost:5271/bookinghub";
+// PROD
+// const hubUrl = "https://backend20250901141037.azurewebsites.net/bookinghub";
+
 
 console.log("----🔌 SignalR ansluter till:------", hubUrl);
 

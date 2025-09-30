@@ -98,6 +98,7 @@ OPENAI_API_KEY = "your_generated_openai_api_key"
 
 ```bash
 git clone https://github.com/Dilemma98/InnoviaHub.git
+
 cd InnoviaHub/Backend 
 ```
 

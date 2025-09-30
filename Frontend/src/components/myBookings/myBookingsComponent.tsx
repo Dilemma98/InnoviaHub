@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HubConnectionBuilder, HubConnection } from "@microsoft/signalr";
+import connection from "../../services/signalRConnection";
 import "./myBookings.css";
 import UnBookBtn from "./unBookBtn";
 import { BASE_URL } from "../../config";
@@ -28,8 +28,6 @@ interface User {
 interface MyBookingsProps {
   className?: string;
 }
-
-const hubUrl = `${BASE_URL}bookinghub`;
 
 const MyBookingsComponent = ({ className }: MyBookingsProps) => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -99,23 +97,24 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
 
     fetchBookings();
 
-    // ----- SignalR -----
-    const connection: HubConnection = new HubConnectionBuilder()
-      .withUrl(hubUrl)
-      .withAutomaticReconnect()
-      .build();
+    // Starta SignalR-anslutning om den inte är igång
+    if (connection.state === "Disconnected") {
+      connection.start()
+        .then(() => {
+          console.log("✅ SignalR connected");
+        })
+        .catch((err) => console.error("SignalR error:", err));
+    }
 
-    connection.start()
-      .then(() => console.log("✅ SignalR connected"))
-      .catch((err) => console.error("SignalR error:", err));
+    // Lyssna på event
+    const handler = (update: { bookingId: number }) => {
+      setBookings((prev) => prev.filter((b) => b.bookingId !== update.bookingId));
+    };
+    connection.on("BookingChanged", handler);
 
-    connection.on("ReceiveBookingUpdate", (update: { BookingId: number }) => {
-      // Remove booking live from UI when backend sends update
-      setBookings((prev) => prev.filter((b) => b.bookingId !== update.BookingId));
-    });
-
+    // Cleanup
     return () => {
-      connection.stop();
+      connection.off("BookingChanged", handler);
     };
   }, []);
 

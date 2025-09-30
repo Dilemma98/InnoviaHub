@@ -17,6 +17,17 @@ if (builder.Environment.IsDevelopment())
     DotNetEnv.Env.Load();
 }
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
 builder.Configuration
     .AddJsonFile("appsettings.Development.json", optional: true)
     .AddEnvironmentVariables();
@@ -52,16 +63,6 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
         RoleClaimType = ClaimTypes.Role // 👈 viktigt
     };
-});
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactDev", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-    });
 });
 
 //----Add OpenAI----
@@ -149,5 +150,6 @@ app.UseAuthorization();
 app.MapGet("/", () => "Backend is running 🚀");
 app.MapControllers();
 app.MapHub<BookingHub>("/bookinghub");
+
 
 app.Run();

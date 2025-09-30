@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
-import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import connection from "../../services/signalRConnection";
 import "./overviewcard.css";
 import { BASE_URL } from "../../config";
 import LoadingSpinner from "../loading/loadingComponent";
-
-// Replace /api to /bookinghub
-const hubUrl = BASE_URL.replace('/api/', '') + '/bookinghub';
-
 
 interface ResourceStatus {
   MeetingRoom: number;
@@ -23,35 +19,36 @@ const OverviewCard = () => {
     AIServer: 0,
   });
   const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     setLoading(true);
-    // Get initial data from backend
     fetch(`${BASE_URL}Booking/ResourceAvailability`)
-      .then(res => res.json())
-      .then(data => setStatus(data))
-      .catch(err => console.error(err))
+      .then((res) => res.json())
+      .then((data) => setStatus(data))
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
 
-    // Start SignalR connection
-    const connection: HubConnection = new HubConnectionBuilder()
-      .withUrl(`${hubUrl}`)
-      .withAutomaticReconnect()
-      .build();
+    // Starta SignalR-anslutning om den inte är igång
+    if (connection.state === "Disconnected") {
+      connection.start()
+        .then(() => {
+          console.log("Connected to SignalR hub");
+        })
+        .catch((err) => console.error("SignalR connection error:", err));
+    }
 
-    connection.start()
-      .then(() => console.log("Connected to SignalR hub"))
-      .catch(err => console.error("SignalR connection error:", err));
-
-    // Listen to updates
-    connection.on("ReceiveBookingUpdate", () => {
+    // Lyssna på event
+    const handler = () => {
       fetch(`${BASE_URL}Booking/ResourceAvailability`)
-        .then(res => res.json())
-        .then(data => setStatus(data))
-        .catch(err => console.error(err))
-    });
+        .then((res) => res.json())
+        .then((data) => setStatus(data))
+        .catch((err) => console.error(err));
+    };
+    connection.on("ReceiveBookingUpdate", handler);
 
+    // Cleanup
     return () => {
-      connection.stop();
+      connection.off("ReceiveBookingUpdate", handler);
     };
   }, []);
 
@@ -59,46 +56,46 @@ const OverviewCard = () => {
     <div className="overviewCard">
       <h2>Snabb översikt</h2>
       <p>Här får du en snabb översikt över alla lediga skrivbord, mötesrum, VR-headset och AI-servrar.</p>
-
       <div className="overview-grid">
         <div className="overview-item">
           <h3>Lediga skrivbord</h3>
           {loading ? (
-           <div className="loadingAvailableResources">
-             <LoadingSpinner />
-           </div> )
-            : (<span className="count">{status.Desk}</span>)
-          }
+            <div className="loadingAvailableResources">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <span className="count">{status.Desk}</span>
+          )}
         </div>
-
         <div className="overview-item">
           <h3>Lediga AI-servrar</h3>
-         {loading ? (
+          {loading ? (
             <div className="loadingAvailableResources">
-             <LoadingSpinner />
-           </div> )
-            : ( <span className="count">{status.AIServer}</span>)
-          }
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <span className="count">{status.AIServer}</span>
+          )}
         </div>
-
         <div className="overview-item">
           <h3>Lediga mötesrum</h3>
           {loading ? (
             <div className="loadingAvailableResources">
-             <LoadingSpinner />
-           </div> )
-            : ( <span className="count">{status.MeetingRoom}</span>)
-          }
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <span className="count">{status.MeetingRoom}</span>
+          )}
         </div>
-
         <div className="overview-item">
           <h3>Lediga VR-headset</h3>
           {loading ? (
             <div className="loadingAvailableResources">
-             <LoadingSpinner />
-           </div> )
-            : ( <span className="count">{status.VRHeadset}</span>)
-          }
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <span className="count">{status.VRHeadset}</span>
+          )}
         </div>
       </div>
     </div>

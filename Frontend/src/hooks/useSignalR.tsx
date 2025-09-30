@@ -1,15 +1,12 @@
 import { useEffect, useRef } from "react";
 import connection from "../services/signalRConnection";
-import { HubConnectionState } from "@microsoft/signalr";
 
 export interface BookingUpdate {
   resourceId: number;
-  start: string; // ISO string
-  end: string;   // ISO string
   date: string;
 }
 
-// Global subscribers
+// Global list of subscribers
 const subscribers: ((update: BookingUpdate) => void)[] = [];
 
 // Broadcast to all subscribers
@@ -18,7 +15,7 @@ const broadcast = (update: BookingUpdate) => {
   subscribers.forEach(cb => cb(update));
 };
 
-// Ref to track connection
+// Ref to controll if connection is initiated
 const isConnectedRef = { current: false };
 
 const useSignalr = (callback: (update: BookingUpdate) => void, source = "unknown") => {
@@ -30,25 +27,28 @@ const useSignalr = (callback: (update: BookingUpdate) => void, source = "unknown
     subscribers.push(callbackRef.current);
 
     const startConnection = async () => {
-      // Register event once
-      if (!(connection as any)._hasHandler) {
-        connection.on("ReceiveBookingUpdate", (update: BookingUpdate) => {
-          console.log("📡 Hub message received:", update); // <- logga alltid här
-          broadcast(update);
-        });
-        (connection as any)._hasHandler = true;
-      } else {
-        console.log("⚠️ Already has handler, skipping");
-      }
+      if (!isConnectedRef.current) {
+        // Add event handler if not already 
+        if (!(connection as any)._hasHandler) {
+          connection.on("ReceiveBookingUpdate", broadcast);
+          (connection as any)._hasHandler = true;
+          console.log("📡 SignalR handler registered");
+        }
 
-      // Start connection if disconnected
-      if (connection.state === "Disconnected") {
-        await connection.start();
-        console.log("✅ SignalR connected");
-      } else {
-        console.log("⚠️ Connection already started, skipping start()");
+        if (connection.state !== "Connected") {
+          try {
+            await connection.start();
+            isConnectedRef.current = true;
+            console.log("✅ SignalR connected");
+            // Trigger dummy event to test
+            broadcast({ resourceId: -1, date: new Date().toISOString() });
+          } catch (err) {
+            console.error("❌ SignalR connection error:", err);
+          }
+        } else {
+          isConnectedRef.current = true;
+        }
       }
-
     };
 
     startConnection();
@@ -57,7 +57,7 @@ const useSignalr = (callback: (update: BookingUpdate) => void, source = "unknown
       const index = subscribers.indexOf(callbackRef.current);
       if (index !== -1) subscribers.splice(index, 1);
     };
-  }, [source]);
+  }, [callback, source]);
 };
 
 export default useSignalr;
