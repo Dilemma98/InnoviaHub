@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(InnoviaHubDB))]
-    [Migration("20250917082726_AddResourcesTable")]
-    partial class AddResourcesTable
+    [Migration("20251002095337_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

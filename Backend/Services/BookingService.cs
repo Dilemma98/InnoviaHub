@@ -57,7 +57,7 @@ public class BookingService
         .ToList();
     }
 
-    public bool IsBookingAvailable(int resourceId, DateTime startTime, DateTime endTime)
+    public bool IsBookingAvailable(int resourceId, DateTimeOffset startTime, DateTimeOffset endTime)
     {
         var bookingForResource = _context.Bookings.Where(b => b.ResourceId == resourceId);
         var bookingsOverlap = bookingForResource.Any(b => startTime < b.EndTime && endTime > b.StartTime);
