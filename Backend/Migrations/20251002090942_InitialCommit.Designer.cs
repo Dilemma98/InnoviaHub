@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(InnoviaHubDB))]
-    [Migration("20250916112743_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251002090942_InitialCommit")]
+    partial class InitialCommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,11 +50,15 @@ namespace Backend.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("BookingId");
 
-                    b.ToTable("Booking");
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("InnoviaHub.Models.Resource", b =>
@@ -77,7 +81,7 @@ namespace Backend.Migrations
 
                     b.HasKey("ResourceId");
 
-                    b.ToTable("Resource");
+                    b.ToTable("Resources");
 
                     b.HasData(
                         new
@@ -481,7 +485,28 @@ namespace Backend.Migrations
 
                     b.HasKey("TimeslotId");
 
+                    b.HasIndex("ResourceId");
+
                     b.ToTable("Timeslots");
+                });
+
+            modelBuilder.Entity("InnoviaHub.Models.Booking", b =>
+                {
+                    b.HasOne("InnoviaHub.Models.Resource", "Resource")
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InnoviaHub.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resource");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -533,6 +558,20 @@ namespace Backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Timeslot", b =>
+                {
+                    b.HasOne("InnoviaHub.Models.Resource", null)
+                        .WithMany("Timeslots")
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InnoviaHub.Models.Resource", b =>
+                {
+                    b.Navigation("Timeslots");
                 });
 #pragma warning restore 612, 618
         }
