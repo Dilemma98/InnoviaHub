@@ -5,6 +5,8 @@ import ShowAvailableTimeslots from "./showTimeslots";
 import Calendar from "react-calendar";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../src/config";
+// Import type definition for Timeslot
+// import type { Timeslot } from "../../types/timeslot";
 
 interface ChooseDateTimeProps {
   selectedResourceName: string;

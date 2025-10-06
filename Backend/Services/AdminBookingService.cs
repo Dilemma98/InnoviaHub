@@ -25,7 +25,7 @@ namespace Backend.Services
                 {
                     BookingId = b.BookingId,
                     UserId = b.UserId,
-                    MemberName = b.User.FirstName + " " + b.User.LastName, // ✅ Hämtar riktiga namn
+                    MemberName = b.User.FirstName + " " + b.User.LastName,
                     ResourceId = b.ResourceId,
                     ResourceName = b.Resource.ResourceName,
                     BookingType = b.BookingType,

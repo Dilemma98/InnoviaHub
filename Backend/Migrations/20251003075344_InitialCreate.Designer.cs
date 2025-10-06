@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(InnoviaHubDB))]
-    [Migration("20250916112743_InitialCreate")]
+    [Migration("20251003075344_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -39,22 +39,26 @@ namespace Backend.Migrations
                     b.Property<DateTime>("DateOfBooking")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("EndTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("ResourceId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("StartTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("BookingId");
 
-                    b.ToTable("Booking");
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("InnoviaHub.Models.Resource", b =>
@@ -77,7 +81,7 @@ namespace Backend.Migrations
 
                     b.HasKey("ResourceId");
 
-                    b.ToTable("Resource");
+                    b.ToTable("Resources");
 
                     b.HasData(
                         new
@@ -467,8 +471,8 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TimeslotId"));
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("EndTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("IsBooked")
                         .HasColumnType("bit");
@@ -476,12 +480,33 @@ namespace Backend.Migrations
                     b.Property<int>("ResourceId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("StartTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("TimeslotId");
 
+                    b.HasIndex("ResourceId");
+
                     b.ToTable("Timeslots");
+                });
+
+            modelBuilder.Entity("InnoviaHub.Models.Booking", b =>
+                {
+                    b.HasOne("InnoviaHub.Models.Resource", "Resource")
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InnoviaHub.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Resource");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -533,6 +558,20 @@ namespace Backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Timeslot", b =>
+                {
+                    b.HasOne("InnoviaHub.Models.Resource", null)
+                        .WithMany("Timeslots")
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InnoviaHub.Models.Resource", b =>
+                {
+                    b.Navigation("Timeslots");
                 });
 #pragma warning restore 612, 618
         }

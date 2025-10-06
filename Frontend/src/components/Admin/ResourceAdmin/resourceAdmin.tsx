@@ -35,12 +35,6 @@ const enumNumberToKey: Record<number, BookingType> = {
   3: "AIServer",
 };
 
-const enumNumberToLabel: Record<number, string> = {
-  0: "Mötesrum",
-  1: "Skrivbord",
-  2: "VR-Headset",
-  3: "AI-Server",
-};
 
 const enumMap: Record<BookingType, number> = {
   Desk: 1,
@@ -50,13 +44,16 @@ const enumMap: Record<BookingType, number> = {
 };
 
 export default function ResourceAdmin() {
+  // Current time for checking if a resource is currently booked
+  const now = new Date();
+
   const [selectedType, setSelectedType] = useState<BookingType>("Desk");
   const [selectedTypeForAdd, setSelectedTypeForAdd] = useState<BookingType>("Desk");
   const [resources, setResources] = useState<Resource[]>([]);
   const [newResource, setNewResource] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Funktion för att ladda resurser
+  // Function to load resources from backend
   const loadResources = useCallback(async () => {
     setLoading(true);
     try {
@@ -77,12 +74,12 @@ export default function ResourceAdmin() {
     }
   }, []);
 
-  // Initial laddning
+  // Initial loading of resources
   useEffect(() => {
     loadResources();
   }, [loadResources]);
 
-  // SignalR realtidsuppdatering
+  // SignalR realtime updates
   useSignalr(() => {
     loadResources();
   }, "all-resources");
@@ -201,57 +198,38 @@ export default function ResourceAdmin() {
         {filteredResources.map((res) => (
           <div key={res.resourceId} className="resource-card">
             <h3>{res.resourceName}</h3>
-            <p>Typ: {enumNumberToLabel[res.resourceType]}</p>
-
             <div style={{ marginTop: "6px" }}>
+
               Status:{" "}
-              {res.capacity > 0 ? (
+              {res.timeslots && res.timeslots.some(slot => {
+                // Compare current time with timeslot start and end
+                // to show if currently booked
+                const start = new Date(slot.startTime);
+                const end = new Date(slot.endTime);
+                return slot.isBooked && now >= start && now <= end; 
+              }) ? (
+
+                // If booked, show red dot
                 <span
                   style={{
                     display: "inline-block",
                     width: "12px",
                     height: "12px",
-                    marginLeft: "0.5em",
-                    borderRadius: "50%",
-                    backgroundColor: "green",
-                  }}
-                  title={`Ledig kapacitet: ${res.capacity}`}
-                />
-              ) : (
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "12px",
-                    height: "12px",
-                    marginLeft: "0.5em",
                     borderRadius: "50%",
                     backgroundColor: "red",
                   }}
-                  title="Fullbokad"
                 />
-              )}
-            </div>
-
-            <div style={{ marginTop: "6px" }}>
-              Slots:
-              {res.timeslots.length > 0 ? (
-                <span style={{
-                  display: "inline-block",
-                  width: "12px",
-                  height: "12px",
-                  marginLeft: "0.5em",
-                  borderRadius: "50%",
-                  backgroundColor: "green",
-                }} title={`${res.timeslots.length} timeslots`} />
               ) : (
-                <span style={{
-                  display: "inline-block",
-                  width: "12px",
-                  height: "12px",
-                  marginLeft: "0.5em",
-                  borderRadius: "50%",
-                  backgroundColor: "red",
-                }} title="Inga timeslots" />
+                // If not booked, show green dot
+               <span
+                  style={{
+                    display: "inline-block",
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    backgroundColor: "green",
+                  }}
+                />
               )}
             </div>
 

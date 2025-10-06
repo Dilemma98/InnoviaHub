@@ -51,7 +51,7 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
   };
 
   const formatTime = (utcTime: string) => {
-    const date = new Date(utcTime + "Z");
+    const date = new Date(utcTime);
     return date.toLocaleTimeString("sv-SE", {
       hour: "2-digit",
       minute: "2-digit",
@@ -61,7 +61,7 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
   };
 
   const formatDateToSwedish = (dateString: string) => {
-    const date = new Date(dateString + "Z");
+    const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric" };
     const parts = new Intl.DateTimeFormat("sv-SE", options).formatToParts(date);
     const weekday = parts.find((p) => p.type === "weekday")?.value;

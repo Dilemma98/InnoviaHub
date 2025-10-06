@@ -7,7 +7,7 @@ namespace InnoviaHub.DTOs
         public string UserId { get; set; } = null!;
         public int ResourceId { get; set; }
         public BookingType BookingType { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
     }
 }

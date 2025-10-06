@@ -29,8 +29,9 @@
 }
 
 .actions {
-  display: flex;
+  width: 2em;
   gap: 10px;
+  margin-left: 2.5em;
 }
 
 .editBtn,

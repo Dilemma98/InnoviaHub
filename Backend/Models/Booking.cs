@@ -15,9 +15,9 @@ namespace InnoviaHub.Models
         //To connect Booking to Resource
         public BookingType BookingType { get; set; }
         [Required]
-        public DateTime StartTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
         [Required]
-        public DateTime EndTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
         public DateTime DateOfBooking { get; set; }
     }
 }
