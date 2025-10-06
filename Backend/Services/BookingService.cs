@@ -41,21 +41,21 @@ public class BookingService
     public List<BookingDTO> GetBookingsByUser(string userId)
     {
           return _context.Bookings
-        .Include(b => b.Resource)
-        .Where(b => b.UserId == userId)
-        .Select(b => new BookingDTO
-        {
-            BookingId = b.BookingId,
-            UserId = b.UserId,
-            MemberName = b.User.FirstName + " " + b.User.LastName,
-            ResourceId = b.ResourceId,
-            ResourceName = b.Resource != null ? b.Resource.ResourceName : "Unknown",
-            BookingType = b.BookingType,
-            StartTime = b.StartTime,
-            EndTime = b.EndTime,
-            DateOfBooking = b.DateOfBooking
-        })
-        .ToList();
+            .Include(b => b.Resource)
+            .Where(b => b.UserId == userId)
+            .Select(b => new BookingDTO
+            {
+                BookingId = b.BookingId,
+                UserId = b.UserId,
+                MemberName = b.User.FirstName + " " + b.User.LastName,
+                ResourceId = b.ResourceId,
+                ResourceName = b.Resource != null ? b.Resource.ResourceName : "Unknown",
+                BookingType = b.BookingType,
+                StartTime = b.StartTime,
+                EndTime = b.EndTime,
+                DateOfBooking = b.DateOfBooking
+            })
+            .ToList();
     }
 
     public bool IsBookingAvailable(int resourceId, DateTimeOffset startTime, DateTimeOffset endTime)
