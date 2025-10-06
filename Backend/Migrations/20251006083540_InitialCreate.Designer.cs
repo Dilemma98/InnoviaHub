@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(InnoviaHubDB))]
-    [Migration("20251003075344_InitialCreate")]
+    [Migration("20251006083540_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
