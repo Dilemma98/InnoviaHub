@@ -91,6 +91,12 @@ JWT_SECRET = "your_generated_jwt_token"
 OPENAI_API_KEY = "your_generated_openai_api_key"
  > ⚠️ Never commit your API key to version control. Keep it safe and only share it via environment variables or secret managers.
 
+
+
+#### AZURE CONNECTION-STRING
+> This string is provided separately to the course instructor
+
+
 ------
 ### Backend Setup
 

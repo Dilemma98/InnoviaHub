@@ -47,6 +47,7 @@ public class BookingService
         {
             BookingId = b.BookingId,
             UserId = b.UserId,
+            MemberName = b.User.FirstName + " " + b.User.LastName,
             ResourceId = b.ResourceId,
             ResourceName = b.Resource != null ? b.Resource.ResourceName : "Unknown",
             BookingType = b.BookingType,

@@ -48,8 +48,8 @@ const BookingsAdmin = () => {
               bookingId: b.bookingId,
               resourceName: b.resourceName,
               memberName: b.memberName,
-              startTime: new Date(b.startTime.endsWith("Z") ? b.startTime : b.startTime + "Z"),
-              endTime: new Date(b.endTime.endsWith("Z") ? b.endTime : b.endTime + "Z"),
+              startTime: new Date(b.startTime),
+              endTime: new Date(b.endTime)
             } as BookingWithDates)
           )
           .sort(
@@ -75,7 +75,6 @@ const BookingsAdmin = () => {
               timeZone: "Europe/Stockholm",
             })}`,
           }));
-
         setBookings(mapped);
       } catch (err: any) {
         console.error(err);

@@ -8,17 +8,17 @@ namespace Backend.Data
     {
         public InnoviaHubDB CreateDbContext(string[] args)
         {
-            // Ladda env vid design-time
+            // Load environment variables from .env file
             Env.Load();
 
-            var connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
-            if (string.IsNullOrWhiteSpace(connection))
+            var connectionString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new Exception("Connection string 'AZURE_SQL_CONNECTIONSTRING' is missing.");
             }
 
             var optionsBuilder = new DbContextOptionsBuilder<InnoviaHubDB>();
-            optionsBuilder.UseSqlServer(connection);
+            optionsBuilder.UseSqlServer(connectionString);
 
             return new InnoviaHubDB(optionsBuilder.Options);
         }

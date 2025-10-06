@@ -72,7 +72,7 @@ const ConfirmBooking = ({
   };
   // Fixad svensk tidskonvertering
   const formatTime = (utcTime: string) => {
-    const date = new Date(utcTime + 'Z');
+    const date = new Date(utcTime);
     return date.toLocaleTimeString("sv-SE", {
       hour: "2-digit",
       minute: "2-digit",
@@ -91,8 +91,8 @@ const ConfirmBooking = ({
       userId: user.id,
       resourceId: selectedResourceId,
       bookingType: getBookingTypeForResource(selectedResourceId), // måste vara ett värde som backend förstår
-      startTime: selectedTimeslot.startTime, // ISO-format, t.ex. "2025-09-30T10:00:00"
-      endTime: selectedTimeslot.endTime      // ISO-format
+      startTime: new Date(selectedTimeslot.startTime).toISOString(), // ISO-format, t.ex. "2025-09-30T10:00:00"
+      endTime: new Date(selectedTimeslot.endTime).toISOString()     // ISO-format
     };
 
     fetch(`${BASE_URL}Booking`, {

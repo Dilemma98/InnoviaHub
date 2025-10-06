@@ -63,18 +63,21 @@ namespace InnoviaHub.Controllers
                 return BadRequest(ModelState);
             }
 
-            TimeZoneInfo swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+            // TimeZoneInfo swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
 
             var startUtc = dto.StartTime;
             var endUtc = dto.EndTime;
+
+            if (startUtc < DateTimeOffset.UtcNow)
+                return BadRequest("Start time must be in the future.");
 
             // Control overlapping
             if (!_bookingService.IsBookingAvailable(dto.ResourceId, startUtc, endUtc))
                 return Conflict("Booking overlaps with an existing one.");
 
-            var nowInSweden = TimeZoneInfo.ConvertTime(DateTime.Now, swedishTimeZone);
-            if (startUtc < nowInSweden)
-                return BadRequest("Start time must be in the future.");
+            // var nowInSweden = TimeZoneInfo.ConvertTime(DateTime.Now, swedishTimeZone);
+            // if (startUtc < nowInSweden)
+            //     return BadRequest("Start time must be in the future.");
 
             // Create booking
             var booking = new Booking
@@ -87,6 +90,10 @@ namespace InnoviaHub.Controllers
                 DateOfBooking = DateTime.Now,
             };
 
+            var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+            var startInSweden = TimeZoneInfo.ConvertTime(booking.StartTime, swedishTimeZone);
+            var endInSweden = TimeZoneInfo.ConvertTime(booking.EndTime, swedishTimeZone);
+
 
             _bookingService.CreateBooking(booking);
             Console.WriteLine("📡 Sending SignalR update (Create)...");
@@ -94,8 +101,8 @@ namespace InnoviaHub.Controllers
             {
                 ResourceId = booking.ResourceId,
                 Date = booking.StartTime.ToString("yyyy-MM-dd"),
-                Start = booking.StartTime,
-                End = booking.EndTime
+                Start = startInSweden,
+                End = endInSweden
             });
 
             return Ok(booking);
@@ -119,8 +126,8 @@ namespace InnoviaHub.Controllers
                 BookingId = booking.BookingId,
                 ResourceId = booking.ResourceId,
                 Date = booking.StartTime.ToString("yyyy-MM-dd"),
-                Start = booking.StartTime,
-                End = booking.EndTime
+                Start = booking.StartTime.UtcDateTime,
+                End = booking.EndTime.UtcDateTime
             });
 
             return NoContent();
@@ -162,7 +169,7 @@ namespace InnoviaHub.Controllers
             //Days from now
             // ).AddDays(1);
 
-            var nowUtc = TimeZoneInfo.ConvertTimeToUtc(nowInSweden, swedishTimeZone);
+            var nowUtc = DateTimeOffset.UtcNow;
 
             var resources = _context.Resources
                 .Include(r => r.Timeslots)
