@@ -23,6 +23,8 @@ The `mainV2` branch is an individual continuation and further development by [Em
 ## Added features 
 - **AI-implementation**
 
+  This feature helps users avoid personal double-bookings by using AI to check their existing bookings before confirming a new one.
+
 ## Tech Stack
 
 ### Backend
