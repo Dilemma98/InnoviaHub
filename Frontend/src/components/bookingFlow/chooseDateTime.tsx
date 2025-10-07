@@ -5,8 +5,7 @@ import ShowAvailableTimeslots from "./showTimeslots";
 import Calendar from "react-calendar";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../src/config";
-// Import type definition for Timeslot
-// import type { Timeslot } from "../../types/timeslot";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 interface ChooseDateTimeProps {
   selectedResourceName: string;
@@ -107,6 +106,7 @@ const ChooseDateTime = ({
           Tillbaka
         </button>
       </div>
+      <VirtualAssistant />
     </div>
   );
 };

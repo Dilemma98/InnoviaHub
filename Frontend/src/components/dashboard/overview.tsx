@@ -3,6 +3,7 @@ import connection from "../../services/signalRConnection";
 import "./overviewcard.css";
 import { BASE_URL } from "../../config";
 import LoadingSpinner from "../loading/loadingComponent";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 interface ResourceStatus {
   MeetingRoom: number;
@@ -98,6 +99,7 @@ const OverviewCard = () => {
           )}
         </div>
       </div>
+      <VirtualAssistant />
     </div>
   );
 };

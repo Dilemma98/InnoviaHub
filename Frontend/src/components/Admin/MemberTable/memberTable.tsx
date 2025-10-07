@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./MemberTable.css";
 import { BASE_URL } from "../../../config";
 import LoadingSpinner from "../../loading/loadingComponent";
+import VirtualAssistant from "../../virtualAssistant/virtualAssistant";
 
 interface Member {
   id: string;
@@ -253,6 +254,7 @@ const MemberTable: React.FC = () => {
           )}
         </tbody>
       </table>
+      <VirtualAssistant />
     </div>
   );
 

@@ -3,6 +3,7 @@ import "./resourceAdmin.css";
 import useSignalr from "../../../hooks/useSignalR";
 import { BASE_URL } from "../../../config";
 import LoadingSpinner from "../../loading/loadingComponent";
+import VirtualAssistant from "../../virtualAssistant/virtualAssistant";
 
 type BookingType = "Desk" | "VRHeadset" | "MeetingRoom" | "AIServer";
 
@@ -239,6 +240,7 @@ export default function ResourceAdmin() {
           </div>
         ))}
       </div>
+      <VirtualAssistant />
     </div>
   );
 }
