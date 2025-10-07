@@ -20,7 +20,7 @@ const VirtualAssistant = ({ message }: VirtualAssistantProps) => {
             // and talkingbubble should be active
             const timer = setTimeout(() => {
                 setActive(false);
-            }, 12000);
+            }, 10000);
             return () => clearTimeout(timer);
         } else {
             setActive(false);

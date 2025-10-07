@@ -117,7 +117,7 @@ const ShowAvailableTimeslots = ({
           const now = new Date();
           // ------------Only for development------------
           // Faking the time is 13
-          now.setHours(11, 0, 0, 0)
+          // now.setHours(11, 0, 0, 0);
           //---------------------------------------------
           const slotStart = new Date(slot.startTime);
           // Check if slotStart is in the past, by comparing with now
