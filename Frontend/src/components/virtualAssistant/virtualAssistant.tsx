@@ -1,13 +1,32 @@
 import { useState, useEffect } from "react";
 
-const VirtualAssistant = () => {
-    // State to manage the visibility of the assistant
-    // depending on personal doubleBooking or not
-    const [active, setSctive] = useState(false);
-    // State to handle hover effect
+// Interface for VirtualAssistant component
+interface VirtualAssistantProps {
+    // Message that triggers assistant active state
+    message: string | null;
+}
+const VirtualAssistant = ({ message }: VirtualAssistantProps) => {
+
+    // State to manage assistant activation
+    const [active, setActive] = useState(false);
+    // State to manage hovering of the assistant
     const [hover, setHover] = useState(false);
 
-    // Fetch Assistant from backend
+    // Acitave assistant if there is a message coming from ChooseDateTime
+    useEffect(() => {
+        if (message) {
+            setActive(true);
+            // Set timer for how long the assistant
+            // and talkingbubble should be active
+            const timer = setTimeout(() => {
+                setActive(false);
+            }, 12000);
+            return () => clearTimeout(timer);
+        } else {
+            setActive(false);
+        }
+    }, [message]);
+
     return (
         <div
             style={{
@@ -17,29 +36,36 @@ const VirtualAssistant = () => {
                 width: "4em",
                 zIndex: 9999
             }}>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                transition: "transform 0.5s ease",
-                transform: active ? "translateY(-2em)" : "translateY(0)"
-            }}
+            <div
+                style={{
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                }}
+                // Tracks hover
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => setHover(false)}
             >
                 {/* Head */}
-                <div style={{
-                    width: "4em",
-                    height: "4em",
-                    borderRadius: "50%",
-                    background: "radial-gradient(circle at 30% 30%, #fcd5a1, #b3744a)",
-                    boxShadow: "0 0 15px rgba(252,213,161,0.4), 0 0 30px rgba(179,116,74,0.3)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "relative",
-                    right: "2em"
-                }}>
+                <div
+                    style={{
+                        transform: active ? "translateY(0em)" : "translateY(0em)",
+                        transition: "transform 0.5s ease",
+                        width: "4em",
+                        height: "4em",
+                        borderRadius: "50%",
+                        background: "radial-gradient(circle at 30% 30%, #fcd5a1, #b3744a)",
+                        boxShadow: active
+                            ? "0 0 15px rgba(252,213,161,0.4), 0 0 30px rgba(179,116,74,0.3)"
+                            : "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        // position: "relative",
+                        // right: "2em",
+                    }}
+                >
                     {/* Left eye */}
                     <div style={{
                         position: "absolute",
@@ -145,21 +171,21 @@ const VirtualAssistant = () => {
                 <div
                     style={{
                         position: "absolute",
-                        bottom: "8em",
+                        bottom: "5.5em",
                         right: "2em",
-                        background: "#ffc8ae4d",
+                        background: "#ffc8aee6",
                         color: "#1e293b",
                         padding: "0.5rem 0.8rem",
                         borderRadius: "1rem 1rem 0.1rem 1rem",
                         fontSize: "0.9rem",
                         boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                         fontFamily: "Inter, sans-serif",
-                        width: "9em",
+                        width: "15em",
                         textAlign: "center",
                     }}
                 >
                     {/* Message from backend goes here */}
-                    ⚠️ Den här tiden har du redan något inbokat! Vill du ändra tid?
+                    {message}
                 </div>
             )}
 
@@ -170,14 +196,14 @@ const VirtualAssistant = () => {
                         position: "absolute",
                         bottom: "7em",
                         right: "2em",
-                        background: "#fae7eaa5",
+                        background: "#fae7eae6",
                         color: "#1e293b",
                         padding: "0.5rem 0.8rem",
                         borderRadius: "2rem 2rem 2rem 2rem",
                         fontSize: "0.9rem",
                         boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                         fontFamily: "Inter, sans-serif",
-                        width: "9em",
+                        width: "12em",
                         textAlign: "center",
                     }}
                 >

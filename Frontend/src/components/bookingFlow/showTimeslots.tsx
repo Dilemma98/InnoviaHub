@@ -4,7 +4,7 @@ import useSignalr from "../../hooks/useSignalR";
 import { BASE_URL } from "../../config";
 import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
-// Define the shape of a Timeslot-object
+// Define the shape of a Timeslot-object returned from backend
 export type Timeslot = {
   timeslotId: number;
   startTime: string; // UTC
@@ -13,12 +13,13 @@ export type Timeslot = {
   resourceId: number;
 };
 
-// Define the props that this component expects
+// Define the interface props that this component expects
 interface ShowAvailableTimeslotsProps {
   resourceId: number | undefined;
   date: Date;
   selectedTimeslot: Timeslot | null;
   setSelectedTimeslot: (slot: Timeslot) => void;
+  handleTimeslotSelect: (slot: Timeslot) => void;
 }
 
 // Main component function
@@ -26,20 +27,19 @@ const ShowAvailableTimeslots = ({
   resourceId,
   date,
   selectedTimeslot,
-  setSelectedTimeslot,
+  handleTimeslotSelect
+  // setSelectedTimeslot,
 }: ShowAvailableTimeslotsProps) => {
 
   //Local state for storing fetched timeslots
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   // Local state for error handling
   const [error, setError] = useState<string | null>(null);
+  // State for assistantMessage to send as prop to VirtualAssistant-component
+  const [assistantMessage] = useState<string | null>(null);
+  
 
-  // Local state to track if user doublebooks themselves
-  // const [isUserDoubleBooked, setIsUserDoubleBooked] = useState<boolean>(false);
-  // Local state to store users existing bookings for the selected date
-  // const [userBookings, setUserBookings] = useState<Timeslot[]>([]);
-
-  // Fetch timeslots from API
+  // Fetch timeslots from API for a given resource and date
   const fetchTimeslots = useCallback(() => {
     // If no resourceId or date is provided, exit early
     if (!resourceId || !date) return;
@@ -115,6 +115,10 @@ const ShowAvailableTimeslots = ({
           const isBooked = slot.isBooked ?? false;
           // Current time so we have something to compare with
           const now = new Date();
+          // ------------Only for development------------
+          // Faking the time is 13
+          now.setHours(11, 0, 0, 0)
+          //---------------------------------------------
           const slotStart = new Date(slot.startTime);
           // Check if slotStart is in the past, by comparing with now
           const isPast = slotStart < now;
@@ -132,7 +136,8 @@ const ShowAvailableTimeslots = ({
               key={slot.timeslotId}
               className={itemClass}
               // Only allow click if slot is not booked or not in the past
-              onClick={() => { if (!isBooked && !isPast) setSelectedTimeslot(slot); }}
+              onClick={() => { if (!isBooked && !isPast) handleTimeslotSelect(slot);
+              }}
               style={(isBooked || isPast) ? { pointerEvents: "none" } : {}}
             >
               {formatTime(slot.startTime)} - {formatTime(slot.endTime)} {isBooked && "(Bokad)"} {isPast && ""}
@@ -140,7 +145,7 @@ const ShowAvailableTimeslots = ({
           );
         })}
       </ul>
-      <VirtualAssistant />
+      <VirtualAssistant message={assistantMessage} />
     </div>
   );
 };
