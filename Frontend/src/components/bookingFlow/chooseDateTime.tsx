@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../src/config";
 import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
+// Props interface for ChoseDateTime
 interface ChooseDateTimeProps {
   selectedResourceName: string;
   selectedResourceId: number | null;
@@ -19,6 +20,7 @@ interface ChooseDateTimeProps {
   fetchTimeslots: () => void;
 }
 
+// Timeslot type definition
 type Timeslot = {
   timeslotId: number;
   startTime: string;
@@ -36,14 +38,68 @@ const ChooseDateTime = ({
   onContinue,
   onReturn,
 }: ChooseDateTimeProps) => {
-  const [selectedLocalDate, setSelectedLocalDate] = useState<Date | null>(null);
 
+  // State for currently selected date
+  const [selectedLocalDate, setSelectedLocalDate] = useState<Date | null>(null);
+  // State for virtualAssistant message
+  const [assistantMessage, setAssistantMessage] = useState<string | null>(null);
+  // State to show assistant is thinking
+  const [assistantLoading, setAssistantLoading] = useState(false);
+
+  // Fetch timeslots whenever selected date or resource changes
   useEffect(() => {
     if (selectedLocalDate) {
       fetchTimeslots();
     }
   }, [selectedLocalDate, selectedResourceId]);
 
+  // Fetch userdata from localstorage
+  // localStorage.getItem("") ?? "{}"
+  // If no data saved, use empty array to avoid error
+  // ?.userId
+  // If object exists, get userId
+  // ?? null
+  // If userId doesn´t exists, set userId to null
+  const currentUserId = JSON.parse(localStorage.getItem("user") ?? "{}")?.id ?? null;
+
+  // Handler for when a user selects a timeslot
+  // sends request to backend to check for double bookings
+  const handleTimeslotSelect = async (slot: Timeslot) => {
+    
+    // Update parent state with selected timeslot
+    setSelectedTimeslot(slot);
+
+    if(!currentUserId) return;
+
+    setAssistantLoading(true);
+    console.log(assistantLoading);
+    setAssistantMessage("Vänta! Ska bara dubbelkolla dina bokningar... 🤔")
+
+    // Convert backend timezone
+    const startUTC = new Date(slot.startTime).toISOString();
+    const endUTC = new Date(slot.endTime).toISOString();
+
+    try{
+      // Post request to backend
+      const res = await fetch (`${BASE_URL}VirtualAssistant`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          userId: currentUserId,
+          startTime: startUTC,
+          endTime: endUTC
+        })
+      });
+
+      const data = await res.json();
+      setAssistantMessage(data.message);
+    } catch (err) {
+      console.error(err);
+      setAssistantMessage("Ojdå! Just nu är inte assistenten hemma tyvärr..");
+    }
+  };
+
+  // Continue button handler
   const continueBookingBtn = () => {
     if (!selectedResourceId || !selectedLocalDate || !selectedTimeslot) {
       return;
@@ -52,6 +108,7 @@ const ChooseDateTime = ({
     onContinue();
   };
 
+  // Local state for timeslots fetched from backend
   const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   console.log(timeslots);
 
@@ -95,6 +152,7 @@ const ChooseDateTime = ({
               date={selectedLocalDate}
               selectedTimeslot={selectedTimeslot}
               setSelectedTimeslot={setSelectedTimeslot}
+              handleTimeslotSelect={handleTimeslotSelect}
             />
           </div>
         )}
@@ -106,7 +164,8 @@ const ChooseDateTime = ({
           Tillbaka
         </button>
       </div>
-      <VirtualAssistant />
+      {/* Send assistantMessage as prop down to VirtualAssistant */}
+      <VirtualAssistant message={assistantMessage}/>
     </div>
   );
 };
