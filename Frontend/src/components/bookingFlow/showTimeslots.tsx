@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import "./timeslots.css";
 import useSignalr from "../../hooks/useSignalR";
 import { BASE_URL } from "../../config";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 // Define the shape of a Timeslot-object
 export type Timeslot = {
@@ -139,6 +140,7 @@ const ShowAvailableTimeslots = ({
           );
         })}
       </ul>
+      <VirtualAssistant />
     </div>
   );
 };

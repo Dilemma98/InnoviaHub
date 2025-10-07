@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../../config";
 import LoadingSpinner from "../loading/loadingComponent";
 import "./layout.css";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 type Resource = {
     resourceId: number;
@@ -141,6 +142,7 @@ const Layout = () => {
                     })}
                 </div>
             )}
+            <VirtualAssistant />
         </div>
     );
 

@@ -2,6 +2,7 @@ import "./bookingFlow.css";
 import StepBar from "./stepBar";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../src/config";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 // Typ för resource — vi mappar API-svaret i useEffect så naming mismatch inte sabbar allt
 type Resource = {
@@ -85,6 +86,7 @@ const ChooseResource = ({
           Fortsätt
         </button>
       </div>
+      <VirtualAssistant />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import UnBookBtn from "./unBookBtn";
 import { BASE_URL } from "../../config";
 import LoadingSpinner from "../loading/loadingComponent";
 import "../../components/loading/loadingStyle.css";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 interface Booking {
   bookingId: number;
@@ -168,6 +169,7 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
           })}
         </ul>
       )}
+      <VirtualAssistant />
     </div>
   );
 };

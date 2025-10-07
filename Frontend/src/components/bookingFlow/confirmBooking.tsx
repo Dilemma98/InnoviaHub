@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BASE_URL } from "../../config";
 import LoadingSpinner from "../loading/loadingComponent";
 import useSignalr from "../../hooks/useSignalR";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 // Interface för user
 interface User {
@@ -163,6 +164,7 @@ const ConfirmBooking = ({
           Tillbaka
         </button>
       </div>
+      <VirtualAssistant />
     </div>
   );
 };

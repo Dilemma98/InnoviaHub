@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./bookingsAdmin.css";
 import { BASE_URL } from "../../../config";
 import LoadingSpinner from "../../loading/loadingComponent";
+import VirtualAssistant from "../../virtualAssistant/virtualAssistant";
 
 type Booking = {
   bookingId: number;
@@ -133,6 +134,7 @@ const BookingsAdmin = () => {
           )}
         </tbody>
       </table>
+      <VirtualAssistant />
     </div>
   );
 };
