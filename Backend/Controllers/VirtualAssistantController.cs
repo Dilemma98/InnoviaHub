@@ -36,6 +36,8 @@ namespace Backend.Controllers
         // from the client
         public async Task<IActionResult> BookingRequest([FromBody] AiBookingAction action)
         {
+            // Await the AI response from the service
+            // and return it to the client
             var answer = await _virtualAssistantService.AiBookingResponse(
                 action.UserId,
                 action.StartTime,

@@ -51,6 +51,16 @@ public class VirtualAssistantService
         // Create an HttpClient instance using the factory
         var httpClient = _httpClientFactory.CreateClient("OpenAI");
 
+        // Create reference of users existing bookings
+        // to send to AI for context
+        var existingBookings = GetBookingsByUser(userId);
+
+        // existingBookings is a list of BookingDTO
+        // Convert to a formatted string for the AI prompt
+        var bookingInfo = string.Join("\n", existingBookings.Select(b =>
+            $"- From {b.StartTime:yyyy-MM-dd HH:mm} to {b.EndTime:yyyy-MM-dd HH:mm}"
+        ));
+
         // Create the request payload
         // according to OpenAI´s API documentation
         var body = new
@@ -58,13 +68,19 @@ public class VirtualAssistantService
             model = "gpt-4.1",
             input = new object[]
             {
-                    // Set prompt for the AI
-                    new {
+                // Set prompt for the AI
+                
+                // Sending users existing bookings for context
+                // so it can check for conflicts
+                new {
                         role = "system",
-                        content = "Du är en hjälpfull assistant för användarna av InnoviaHub." +
-                                "Ditt jobb att se till så användare inte dubbelbokar sig själva på olika resurser samtidigt " +
-                                "Om en användare försöker boka en resurs som krockar med en redan befintlig bokning, svara på ett finurligt och vänligt sätt. " +
-                                "Ditt jobb är inte att boka resurser, bara att svara på om bokningen är möjlig eller inte. "
+                        content = $@"Du är en hjälpsam assistent för användarna av InnoviaHub. 
+                                    Ditt uppdrag är att förhindra att användare dubbelbokar sig själva på olika resurser samtidigt. 
+                                    Om en användare försöker boka en resurs som krockar med en redan befintlig bokning, svara på ett vänligt och humoristiskt sätt. 
+                                    Du ska inte boka resurser, endast informera om bokningen är möjlig eller om det blir en krock. 
+                                    Användaren har följande befintliga bokningar:
+                                    {bookingInfo}
+                                    Om du inte hittar bokningar som krockar, säg inget."
                     },
 
                     // Set users booking request
