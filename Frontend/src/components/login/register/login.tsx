@@ -52,14 +52,14 @@ const Login = () => {
 
         localStorage.setItem("user", JSON.stringify(user));
 
-        // Trigger custom event för navbar
+        // Trigger custom event for navbar
         window.dispatchEvent(new Event("userUpdated"));
         console.log("UserId LOGIN", user.id);
 
         // Clear input fields
         setEmail("");
         setPassword("");
-
+        console.log("USERID:", user.id);
         navigate("/");
       })
       .catch((error) => {

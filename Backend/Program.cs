@@ -43,6 +43,9 @@ if (string.IsNullOrWhiteSpace(connection))
 builder.Services.AddDbContext<InnoviaHubDB>(options =>
     options.UseSqlServer(connection));
 
+// builder.Services.AddHttpClient();
+builder.Services.AddScoped<VirtualAssistantService>();
+
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<InnoviaHubDB>()
     .AddDefaultTokenProviders();
@@ -70,7 +73,7 @@ builder.Services.AddAuthentication(options =>
 // Add HttpClient and name it "OpenAI" and setup the client, base address, authorization and content type
 builder.Services.AddHttpClient("OpenAI", client =>
 {
-    client.BaseAddress = new Uri("https://api.openai.com/v1/responses");
+    client.BaseAddress = new Uri("https://api.openai.com/v1/");
     // Fetch API key from environment variable
     var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
     // Use variable apiKey to authorize the connection
