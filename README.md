@@ -12,6 +12,16 @@ The `main` branch reflects the group project.
 
 The `mainV2` branch is an individual continuation and further development by [Emma Högdal](https://github.com/Dilemma98).
 
+### Contributors
+This project was originally developed as a group effort by:
+- [Isabel Demirel](https://github.com/pixabel)
+- [Robin Brink](https://github.com/Brinkentosh)
+- [Emma Högdal](https://github.com/Dilemma98)
+
+The `main` branch reflects the group project.
+
+The `mainV2` branch is an individual continuation and further development by [Emma Högdal](https://github.com/Dilemma98).
+
 ## Features
 
 - **User Registration & Authentication**: Secure sign-up and login with JWT tokens.
