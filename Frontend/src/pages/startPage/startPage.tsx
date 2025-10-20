@@ -1,7 +1,7 @@
 import Header from "../../components/header/header";
 import Navbar from "../../components/navbar/navbar";
 import OverviewCard from "../../components/dashboard/overview";
-// import BookingCard from "../../components/dashboard/booking";
+import Sensors from "../../components/IoT-sensors/sensors";
 import "./startPage.css";
 import MyBookingsComponent from "../../components/myBookings/myBookingsComponent";
 import { useState, useEffect } from "react";
@@ -41,7 +41,7 @@ const StartPage = () => {
       <div className="mainContent">
         <div className="dashboard">
           <OverviewCard />
-          
+          <Sensors />
           {/* Show only if user is signed in*/}
           {user && (
             <div className="myBookings">

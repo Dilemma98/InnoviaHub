@@ -99,7 +99,7 @@ const OverviewCard = () => {
           )}
         </div>
       </div>
-      <VirtualAssistant />
+      <VirtualAssistant message={""} />
     </div>
   );
 };
