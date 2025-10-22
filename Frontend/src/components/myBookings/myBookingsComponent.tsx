@@ -150,7 +150,7 @@ const MyBookingsComponent = ({ className }: MyBookingsProps) => {
         <ul className="myBookedResources">
           {bookings
           // Filter out old bookings
-            .filter((booking) => new Date(booking.startTime) >= new Date())
+            .filter((booking) => new Date(booking.endTime) >= new Date())
             .map((booking) => {
               const color = getResourceColor(booking.resourceName);
               return (

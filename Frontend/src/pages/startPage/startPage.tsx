@@ -1,10 +1,11 @@
 import Header from "../../components/header/header";
 import Navbar from "../../components/navbar/navbar";
 import OverviewCard from "../../components/dashboard/overview";
-import Sensors from "../../components/IoT-sensors/sensors";
 import "./startPage.css";
 import MyBookingsComponent from "../../components/myBookings/myBookingsComponent";
 import { useState, useEffect } from "react";
+import WelcomeText from "../../components/welcomeText/welcomeText";
+// import Sensors from "../../components/IoT-sensors/sensors";
 
 // Interface for user
 interface User {
@@ -41,12 +42,15 @@ const StartPage = () => {
       <div className="mainContent">
         <div className="dashboard">
           <OverviewCard />
-          <Sensors />
+          {/* <Sensors /> */}
           {/* Show only if user is signed in*/}
           {user && (
             <div className="myBookings">
               <MyBookingsComponent />
             </div>
+          )}
+          {!user && (
+            <WelcomeText />
           )}
         </div>
       </div>

@@ -86,7 +86,7 @@ const ChooseResource = ({
           Fortsätt
         </button>
       </div>
-      <VirtualAssistant />
+      <VirtualAssistant message={""} />
     </div>
   );
 };

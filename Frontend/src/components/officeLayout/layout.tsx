@@ -64,7 +64,10 @@ const Layout = () => {
                 const resourcesWithBookings = sortedResources.map((res) => {
                     const bookingsForRes = bookingsData
                         .filter((b) => b.resourceId === res.resourceId)
-                        .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()); // Tidigaste först
+                        // Filter out old bookings
+                        .filter((b) => new Date(b.endTime) >= new Date())
+                        // Sort chronologically
+                        .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
                     return {
                         ...res,
                         bookings: bookingsForRes
@@ -128,6 +131,7 @@ const Layout = () => {
                                                             <br />
                                                             {/* Owner of booking */}
                                                             <b>{b.user.firstName} {b.user.lastName}</b>
+                                                            {/* Empty <p>-tag to add space between resource-bookings */}
                                                             <p></p>
                                                         </div>
                                                     );
@@ -142,7 +146,7 @@ const Layout = () => {
                     })}
                 </div>
             )}
-            <VirtualAssistant />
+            <VirtualAssistant message={""}/>
         </div>
     );
 

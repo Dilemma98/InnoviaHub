@@ -1,5 +1,8 @@
 .resource-admin {
   padding: 20px;
+  border-radius: 12px;
+  width: 95%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .type-buttons {
@@ -68,15 +71,15 @@
   margin: 0 0 8px 0;
 }
 
-.actions {
+.actionsResource {
   display: flex;
   justify-content: flex-end;
   margin-top: 1em;
   width: 5em;
-  margin-left: 11em;
+  margin-left: 9em;
 }
 
-.actions .delete {
+.actionsResource .delete {
   color: #ef4444;
   border: none;
   background: none;

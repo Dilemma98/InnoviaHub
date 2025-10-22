@@ -9,7 +9,7 @@ import LayoutPage from "./pages/officeLayout/layoutPage";
 import LoginPage from "./pages/signInPage/signIn";
 import BookingsAdmin from "./components/Admin/BookingsAdmin/bookingsAdmin";
 import ResourceAdmin from "./components/Admin/ResourceAdmin/resourceAdmin";
-
+import SensorsAdmin from "./components/Admin/SensorsAdmin/sensorsAdmin";
 
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
           <Route path="members" element={<MemberTable />} />
           <Route path="bookings" element={<BookingsAdmin />} /> 
           <Route path="resources" element={<ResourceAdmin/>} />
+          <Route path="sensors" element={<SensorsAdmin />} />
         </Route>
        <Route path="office" element={<LayoutPage />} />
         <Route path="/book" element={<BookingPage />} />

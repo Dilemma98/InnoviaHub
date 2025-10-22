@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(options =>
         ),
         ValidateIssuer = false,
         ValidateAudience = false,
-        RoleClaimType = ClaimTypes.Role // 👈 viktigt
+        RoleClaimType = ClaimTypes.Role
     };
 });
 
@@ -80,6 +80,8 @@ builder.Services.AddHttpClient("OpenAI", client =>
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
     // Set what type of content we want to send
     client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+    Console.WriteLine($"OPENAI_API_KEY = {Environment.GetEnvironmentVariable("OPENAI_API_KEY")}");
+
 });
 //----End OpenAI----
 

@@ -234,13 +234,13 @@ export default function ResourceAdmin() {
               )}
             </div>
 
-            <div className="actions">
+            <div className="actionsResource">
               <button className="delete" onClick={() => handleDelete(res.resourceId)}>🗑️ Ta bort</button>
             </div>
           </div>
         ))}
       </div>
-      <VirtualAssistant />
+      <VirtualAssistant message={""}/>
     </div>
   );
 }

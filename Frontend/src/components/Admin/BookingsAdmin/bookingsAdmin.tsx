@@ -115,7 +115,7 @@ const BookingsAdmin = () => {
           ) : bookings.length > 0 ? (
             bookings.map((booking) => (
               <tr key={booking.bookingId}>
-                <td>{booking.resourceName}</td>
+                <td><b>{booking.resourceName}</b></td>
                 <td>{booking.memberName}</td>
                 <td>{booking.date}</td>
                 <td>{booking.time}</td>
@@ -134,7 +134,7 @@ const BookingsAdmin = () => {
           )}
         </tbody>
       </table>
-      <VirtualAssistant />
+      <VirtualAssistant message={""}/>
     </div>
   );
 };

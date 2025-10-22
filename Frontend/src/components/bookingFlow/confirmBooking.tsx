@@ -164,7 +164,7 @@ const ConfirmBooking = ({
           Tillbaka
         </button>
       </div>
-      <VirtualAssistant />
+      <VirtualAssistant message={""} />
     </div>
   );
 };

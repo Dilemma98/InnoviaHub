@@ -180,8 +180,10 @@ const MemberTable: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <div>{member.firstName || "-"}</div>
-                      <div>{member.lastName || ""}</div>
+                      <b>
+                        <div>{member.firstName || "-"}</div>
+                        <div>{member.lastName || ""}</div>
+                      </b>
                     </>
                   )}
                 </td>
@@ -254,7 +256,7 @@ const MemberTable: React.FC = () => {
           )}
         </tbody>
       </table>
-      <VirtualAssistant />
+      <VirtualAssistant message={""} />
     </div>
   );
 

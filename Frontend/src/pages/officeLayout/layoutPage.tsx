@@ -2,6 +2,7 @@ import Layout from "../../components/officeLayout/layout";
 import Header from "../../components/header/header";
 import Navbar from "../../components/navbar/navbar";
 
+
 const LayoutPage = () => {
     return (
         <div className="layoutPage">
