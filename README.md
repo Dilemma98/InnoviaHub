@@ -25,6 +25,14 @@ The `mainV2` branch is an individual continuation and further development by [Em
 
   This feature helps users avoid personal double-bookings by using AI to check their existing bookings before confirming a new one.
 
+
+- **IoT-sensors**
+  
+  This feature allows administrators to view and analyze data from sensors installed throughout the office.
+  
+  This feature is developed in a separate repository. See [IoT Repository](https://github.com/Dilemma98/InnoviaHub-IoT) for details.
+
+
 ## Tech Stack
 
 ### Backend

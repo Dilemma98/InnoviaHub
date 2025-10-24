@@ -12,7 +12,7 @@
 .loadingMeasurements{
     text-align: center;
     width: 50%;
-    margin-left: 70%;
+    margin-left: 50%;
     margin-top: 1em;
 }
 .sensors h2 {
@@ -51,12 +51,10 @@
 
 .value-no {
   color: green;
-  font-weight: bold;
 }
 
 .value-yes {
   color: red;
-  font-weight: bold;
 }
 
 .value-default {

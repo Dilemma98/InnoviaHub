@@ -55,7 +55,7 @@ const BookingsAdmin = () => {
           )
           .sort(
             (a: BookingWithDates, b: BookingWithDates) =>
-              a.startTime.getTime() - b.startTime.getTime()
+              b.startTime.getTime() - a.startTime.getTime()
           )
           .map((b: BookingWithDates) => ({
             bookingId: b.bookingId,

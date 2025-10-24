@@ -40,6 +40,7 @@ const Sensors = () => {
           return;
         }
         const tenant = await responseTenant.json();
+        console.log("Tenant", tenant);
 
         // Fetch devices for tennant
         const responseDevices = await fetch(
@@ -53,6 +54,7 @@ const Sensors = () => {
         const devices = await responseDevices.json();
         // Save to state
         setDevices(devices);
+        console.log("Devices", devices);
 
       } catch (err) {
         console.error("Fetch failed:", err);
@@ -73,7 +75,7 @@ const Sensors = () => {
 
     // Listen to incoming measurements
     hub.on("measurementReceived", (m: Measurement) => {
-      console.log("Mätning mottagen:", m);
+       console.log("DEBUG measurement:", m);
       setNewestMeasurement((prev) => ({ ...prev, [m.deviceId]: m }));
     });
 
@@ -81,8 +83,10 @@ const Sensors = () => {
     hub
       .start()
       .then(() => {
-        hub.invoke("JoinTenant", "innovia");
+        console.log("SignalR connected, joining tenant...");
+        return hub.invoke("JoinTenant", "innovia");
       })
+       .then(() => console.log("Joined tenant group"))
       .catch((err) => console.error("SignalR-error: ", err));
 
     // Cleanup: stop hub when component unmounts
@@ -102,33 +106,29 @@ const Sensors = () => {
           </tr>
         </thead>
         <tbody>
-            {/* If no measurements, show loadingSpinner */}
-          {Object.keys(newestMeasurement).length === 0 ? (
-            <div className="loadingMeasurements">
-              <LoadingSpinner />
-            </div>
+          {loading ? (
+            <tr>
+              <td colSpan={2}>
+                <div className="loadingMeasurements">
+                  <LoadingSpinner />
+                </div>
+              </td>
+            </tr>
+          ) : devices.length === 0 ? (
+            <tr>
+              <td colSpan={2}>Inga sensorer hittades</td>
+            </tr>
           ) : (
-            devices.map((d) => {
-              // Latest measurement for sepcific device
+            devices.map(d => {
               const m = newestMeasurement[d.id];
               let displayValue = "-";
 
-              // If m contains deviceId
               if (m) {
-                // If measurement unit contains 'bool'
                 if (m.unit === "bool") {
-                  // Display 1 as 'Yes' and 0 as 'No'
-                  displayValue = m.value ? "Yes" : "No";
-
-                  // If measurement type contains 'motion'
-                  if (m.type === "motion") {
-                    // Display 1 as 'Detected' and 0 as 'Undetected'
-                    displayValue = m.value ? "Detected" : "Undetected";
-                  }
-
-                  // Else if value is number
+                  displayValue = m.type === "motion" 
+                    ? (m.value ? "Detected" : "Undetected")
+                    : (m.value ? "Yes" : "No");
                 } else if (typeof m.value === "number") {
-                  // Display with only one decimal
                   displayValue = m.value.toFixed(1);
                 } else {
                   displayValue = String(m.value);
