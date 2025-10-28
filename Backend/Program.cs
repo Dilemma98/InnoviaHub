@@ -40,7 +40,7 @@ if (string.IsNullOrWhiteSpace(connection))
     throw new Exception("Connection string 'AZURE_SQL_CONNECTIONSTRING' is missing.");
 }
 
-Console.WriteLine($"[DEBUG] Connection: {connection}");
+Console.WriteLine($"Connection string in Azure: '{Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")}'");
 
 builder.Services.AddDbContext<InnoviaHubDB>(options =>
     options.UseSqlServer(connection));
