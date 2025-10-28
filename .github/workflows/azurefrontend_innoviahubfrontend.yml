@@ -1,65 +1,94 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - InnoviaHubFrontend
+name: Build and deploy React (TypeScript) to Azure Web App - InnoviaHubFrontend
 
 on:
   push:
-    branches:
-      - AzureFrontend
+    branches: [ AzureFrontend ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
+
+    # Ändra om din frontend ligger i en undermapp, t.ex. client/ eller frontend/
+    defaults:
+      run:
+        working-directory: Frontend
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: 20
 
-      - name: npm install, build, and test
+      - name: Install & Build (React)
+        env:
+          REACT_APP_API_URL: https://innoviahub-backend-had9greebjazakbe.swedencentral-01.azurewebsites.net
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-      
-      - name: Upload artifact for deployment job
+          npm ci
+          npm run build
+
+      - name: Add SPA web.config (for React Router)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          @"
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <rewrite>
+                <rules>
+                  <rule name="SPA Fallback" stopProcessing="true">
+                    <match url=".*" />
+                    <conditions logicalGrouping="MatchAll">
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="/index.html" />
+                  </rule>
+                </rules>
+              </rewrite>
+              <staticContent>
+                <remove fileExtension=".json" />
+                <mimeMap fileExtension=".json" mimeType="application/json" />
+              </staticContent>
+            </system.webServer>
+          </configuration>
+          "@ | Out-File -FilePath build/web.config -Encoding utf8
+
+      - name: Upload artifact (build only)
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: .
+          name: frontend-build
+          path: build
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download built artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-      
+          name: frontend-build
+          path: build
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A559E944132746DB90C104A8DDC4BC61 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6658C981A280456EBD50BCA14F34DA89 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D7E667A7CEEA4D8489DD237E57F3DE96 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_YOURID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_YOURID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_YOURID }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App (build/)
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
-          app-name: 'InnoviaHubFrontend'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: InnoviaHubFrontend
+          slot-name: Production
+          package: build
