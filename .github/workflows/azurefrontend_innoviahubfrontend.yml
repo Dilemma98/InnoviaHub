@@ -34,7 +34,7 @@ jobs:
       - name: Add SPA web.config (for React Router)
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path build | Out-Null
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
           @"
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
@@ -57,13 +57,13 @@ jobs:
               </staticContent>
             </system.webServer>
           </configuration>
-          "@ | Out-File -FilePath build/web.config -Encoding utf8
+          "@ | Out-File -FilePath dist/web.config -Encoding utf8
 
       - name: Upload artifact (build only)
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-build
-          path: build
+          name: frontend-dist
+          path: dist
 
   deploy:
     runs-on: windows-latest
@@ -76,8 +76,8 @@ jobs:
       - name: Download built artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend-build
-          path: build
+          name: frontend-dist
+          path: dist
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -86,9 +86,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_YOURID }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_YOURID }}
 
-      - name: Deploy to Azure Web App (build/)
+      - name: Deploy to Azure Web App (dist/)
         uses: azure/webapps-deploy@v3
         with:
           app-name: InnoviaHubFrontend
           slot-name: Production
-          package: build
+          package: dist
+
