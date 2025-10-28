@@ -1,0 +1,62 @@
+import Header from "../../components/header/header";
+import Navbar from "../../components/navbar/navbar";
+import OverviewCard from "../../components/dashboard/overview";
+import "./startPage.css";
+import MyBookingsComponent from "../../components/myBookings/myBookingsComponent";
+import { useState, useEffect } from "react";
+import WelcomeText from "../../components/welcomeText/welcomeText";
+// import Sensors from "../../components/IoT-sensors/sensors";
+
+// Interface for user
+interface User {
+  email: string;
+  isAdmin: boolean;
+  firstName: string;
+}
+
+const StartPage = () => {
+  const [user, setUser] = useState<User | null>(null);
+
+ useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    // Listen to custom event for logout
+    const handleUserUpdated = () => setUser(null);
+    window.addEventListener("userUpdated", handleUserUpdated);
+
+    return () => {
+      window.removeEventListener("userUpdated", handleUserUpdated);
+    };
+  }, []);
+
+
+  return (
+    <div className="startPage">
+      <div className="headerAndNav">
+        <Header />
+        <Navbar />
+      </div>
+      <div className="mainContent">
+        <div className="dashboard">
+          <OverviewCard />
+          {/* <Sensors /> */}
+          {/* Show only if user is signed in*/}
+          {user && (
+            <div className="myBookings">
+              <MyBookingsComponent />
+            </div>
+          )}
+          {!user && (
+            <WelcomeText />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default StartPage;

@@ -1,0 +1,40 @@
+li{
+   list-style: none;
+}
+.timeslotHolder{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+.timeslotItem{
+    background-color: #dadada;
+    padding: 0.5em;
+    border-radius: 1em;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+.timeslotItem:hover{
+    background-color:#61988e67;
+}
+.timeslotItem.selected{
+    background-color: #61988e;;
+}
+
+.timeslotItem.booked {
+  background-color: #ffb3b3 !important;
+  color: #555 !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+.timeslotItem.past {
+  background: #8f8f8fbe;
+  color: #000000;
+  text-decoration: line-through;
+}
+
+.loadingContainerTimeslots{
+    margin-left: 45%;
+}
+

@@ -1,0 +1,62 @@
+.headerAndNav {
+    border-bottom: 1px solid #858585;
+}
+
+
+@media (min-width: 768px) {
+    .headerAndNav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .headerAndNav nav {
+        margin-top: 2em;
+    }
+}
+
+.dashboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 3em;
+    padding: 2em;
+}
+
+/* To style how myBookings component 
+   looks like on startpage */
+.myBookings {
+    width: 45%;
+}
+
+.myBookings h1 {
+    font-size: 1.4em;
+    margin-left: 0.5em;
+}
+
+.myBookings .h2{
+    margin-left: 0.7em;
+}
+
+.myBookings ul {
+    display: flex;
+    margin-top: 1em;
+    /* Wont wrap to enable horisontal scroll instead */
+    flex-wrap: nowrap;
+    padding-left: 1.2em;
+    gap: 1.5em;
+    overflow-x: auto;
+    max-width: 90%;
+    list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #e8e8e8;
+}
+
+.myBookings ul::-webkit-scrollbar {
+    height: 8px;  
+}
+
+.myBookings li {
+    padding: 0.5em;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+}
