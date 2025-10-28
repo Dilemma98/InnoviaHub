@@ -2,6 +2,7 @@ import "./sensors.css";
 import LoadingSpinner from "../loading/loadingComponent";
 import { useEffect, useState } from "react";
 import * as SignalR from "@microsoft/signalr";
+import { BASE_URL } from "../../config";
 
 interface Device {
   id: string;
@@ -32,7 +33,7 @@ const Sensors = () => {
       try {
         // Fetch tennant by slug 'innovia'
         const responseTenant = await fetch(
-          "http://localhost:5101/api/tenants/by-slug/innovia"
+          `${BASE_URL}tenants/by-slug/innovia`
         );
         if (!responseTenant.ok) {
           const text = await responseTenant.text();
@@ -44,7 +45,7 @@ const Sensors = () => {
 
         // Fetch devices for tennant
         const responseDevices = await fetch(
-          `http://localhost:5101/api/tenants/${tenant.id}/devices`
+          `${BASE_URL}tenants/${tenant.id}/devices`
         );
         if (!responseDevices.ok) {
           const text = await responseDevices.text();
@@ -68,7 +69,7 @@ const Sensors = () => {
 
     // --- SignalR hub for realtime-updates ---
     const hub = new SignalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5103/hub/telemetry")
+      .withUrl(`${BASE_URL.replace(/\/api\/?$/, "")}/hub/telemetry`)
       // If disconnected, reconnect
       .withAutomaticReconnect()
       .build();

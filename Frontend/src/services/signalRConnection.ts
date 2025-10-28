@@ -1,9 +1,10 @@
 import * as signalR from "@microsoft/signalr";
 
-// DEV
-const hubUrl = "http://localhost:5271/bookinghub";
-// PROD
-// const hubUrl = "https://backend20250901141037.azurewebsites.net/bookinghub";
+const isDev = import.meta.env.DEV;
+
+const hubUrl = isDev 
+  ? "http://localhost:5271/bookinghub" 
+  : "https://innoviahub-backend-had9greebjazakbe.swedencentral-01.azurewebsites.net/";
 
 
 console.log("----🔌 SignalR ansluter till:------", hubUrl);
