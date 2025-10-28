@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactDev", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://dilemma98.github.io/InnoviaHub/")
+        policy.WithOrigins("http://localhost:5173", "https://dilemma98.github.io")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
