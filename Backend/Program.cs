@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactDev", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://innoviahubfrontend-dcb6h4a7c0duhvaq.westeurope-01.azurewebsites.net/")
+        policy.WithOrigins("http://localhost:5173", "https://purple-dune-09709a403.3.azurestaticapps.net/")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
