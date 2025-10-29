@@ -22,11 +22,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactDev", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://purple-dune-09709a403.3.azurestaticapps.net/")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+        policy
+            .WithOrigins(
+                "http://127.0.0.1:5173/",
+                "http://localhost:5173/",
+                "https://purple-dune-09709a403.3.azurestaticapps.net"
+            )
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithExposedHeaders("Content-Disposition", "x-signalr-user-agent", "x-requested-with")
+            .AllowCredentials();
+
     });
+
 });
 
 builder.Configuration
@@ -152,6 +161,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // app.UseHttpsRedirection();
+app.UseRouting();
 app.UseCors("AllowReactDev");
 app.UseAuthentication();
 app.UseAuthorization();
