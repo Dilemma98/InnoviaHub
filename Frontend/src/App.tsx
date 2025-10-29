@@ -11,7 +11,7 @@ import BookingsAdmin from "./components/Admin/BookingsAdmin/bookingsAdmin";
 import ResourceAdmin from "./components/Admin/ResourceAdmin/resourceAdmin";
 import SensorsAdmin from "./components/Admin/SensorsAdmin/sensorsAdmin";
 
-
+// A comment to push to trigger new workflow try
 function App() {
   return (
     <div className="App">
