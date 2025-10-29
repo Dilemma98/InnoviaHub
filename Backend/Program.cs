@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using InnoviaHub.Hubs;
 using System.Net.Http.Headers;
 using DotNetEnv;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactDev", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://innoviahubfrontend-dcb6h4a7c0duhvaq.westeurope-01.azurewebsites.net/")
+        // New push with new frontendlink
+        policy.WithOrigins("http://localhost:5173", "https://calm-coast-029c51c03.3.azurestaticapps.net")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
