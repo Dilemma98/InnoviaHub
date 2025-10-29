@@ -120,7 +120,7 @@ const Sensors = () => {
             <tr>
               <td colSpan={2}>
                 <div className="noSensorsFound"> 
-                  <p>Tyvärr kan vi inte komma åt sensorerna för tillfället. Testa igen senare</p>
+                  <p>Tyvärr är våra sensorer offline för stunden</p>
                 </div>
               </td>
             </tr>
