@@ -3,6 +3,7 @@ import LoadingSpinner from "../loading/loadingComponent";
 import { useEffect, useState } from "react";
 import * as SignalR from "@microsoft/signalr";
 import { BASE_URL } from "../../config";
+import VirtualAssistant from "../virtualAssistant/virtualAssistant";
 
 interface Device {
   id: string;
@@ -174,6 +175,7 @@ const Sensors = () => {
           )}
         </tbody>
       </table>
+      <VirtualAssistant message={""} />
     </div>
   );
 };
