@@ -117,7 +117,11 @@ const Sensors = () => {
             </tr>
           ) : devices.length === 0 ? (
             <tr>
-              <td colSpan={2}>Inga sensorer hittades</td>
+              <td colSpan={2}>
+                <div className="noSensorsFound"> 
+                  <p>Tyvärr kan vi inte komma åt sensorerna för tillfället. Testa igen senare</p>
+                </div>
+              </td>
             </tr>
           ) : (
             devices.map(d => {

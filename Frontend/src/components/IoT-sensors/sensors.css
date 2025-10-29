@@ -60,3 +60,7 @@
 .value-default {
   color: black;
 }
+
+.noSensorsFound{
+    text-align: center;
+}
