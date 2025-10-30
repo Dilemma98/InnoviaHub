@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import * as SignalR from "@microsoft/signalr";
 import { BASE_URL } from "../../config";
 import VirtualAssistant from "../virtualAssistant/virtualAssistant";
-
+//Trigger new workflow job rerun
 interface Device {
   id: string;
   tenantId: string;
