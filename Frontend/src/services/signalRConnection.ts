@@ -4,7 +4,7 @@ const isDev = import.meta.env.DEV;
 
 const hubUrl = isDev 
   ? "http://localhost:5271/bookinghub" 
-  : "https://innoviahub-backend-had9greebjazakbe.swedencentral-01.azurewebsites.net/";
+  : "https://innoviahub-backend-had9greebjazakbe.swedencentral-01.azurewebsites.net/bookinghub";
 
 
 console.log("----🔌 SignalR ansluter till:------", hubUrl);
