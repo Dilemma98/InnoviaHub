@@ -3,7 +3,8 @@
 InnoviaHub helps organizations efficiently manage and book shared office resources through an intuitive web interface.
 
 ### Demo
-![Demo av InnoviaHub](../InnoviaHub/Frontend/src/assets/demo.gif)
+![Demo av InnoviaHub](./Frontend/src/assets/demo.gif)
+
 
 
 #### InnoviaHub is live at [InnoviaHub live](https://purple-dune-09709a403.3.azurestaticapps.net/) only from 29/10-25 until around 14/11-25
