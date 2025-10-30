@@ -1,8 +1,24 @@
 # InnoviaHub
 
-InnoviaHub is a full-stack web application, built to streamline booking office resources and user managment.
-Built with a React frontend and a .NET 9.0 backend, it offers secure authentication, JWT-based sessions, and API endpoints for managing users and various resources.
-### Contributors
+InnoviaHub helps organizations efficiently manage and book shared office resources through an intuitive web interface.
+
+### Demo
+![Demo av InnoviaHub](../InnoviaHub/Frontend/src/assets/demo.gif)
+
+
+#### InnoviaHub is live at [InnoviaHub live](https://purple-dune-09709a403.3.azurestaticapps.net/) only from 29/10-25 until around 14/11-25
+
+### Quick Start
+---
+
+1. Clone the repo  
+2. Configure your `.env` file  
+3. Run the backend (`dotnet run`)  
+4. Start the frontend (`npm run dev`)  
+5. Open [http://localhost:5173](http://localhost:5173)
+
+
+## Contributors
 This project was originally developed as a group effort by:
 - [Isabel Demirel](https://github.com/pixabel)
 - [Robin Brink](https://github.com/Brinkentosh)
@@ -12,15 +28,22 @@ The `main` branch reflects the group project.
 
 The `mainV2` branch is an individual continuation and further development by [Emma Högdal](https://github.com/Dilemma98).
 
-## Features
 
+## Features
+#### 👥 Developed as group
 - **User Registration & Authentication**: Secure sign-up and login with JWT tokens.
+  > User login to test: 
+  
+  - **Email** : user@test.com
+  - **Password** : Test123!
 - **Admin Controls**: Manage users and resources via dedicated admin endpoints.  
   > Admin login credentials are provided separately to the course instructor.
 - **Resource Booking**: Users can book and manage available office resources via the dashboard.
 - **Responsive UI**: Built with React and styled with CSS modules.
 
-## Added features 
+### Added features 
+---
+#### 🙋‍♀️ Developed individually by me, Emma Högdal
 - **AI-implementation**
 
   This feature helps users avoid personal double-bookings by using AI to check their existing bookings before confirming a new one.
@@ -30,34 +53,35 @@ The `mainV2` branch is an individual continuation and further development by [Em
   
   This feature allows administrators to view and analyze data from sensors installed throughout the office.
   
-  This feature is developed in a separate repository. See [IoT Repository](https://github.com/Dilemma98/InnoviaHub-IoT) for details.
+  This feature was developed in a separate repository. See the forked [IoT Repository](https://github.com/Dilemma98/InnoviaHub-IoT) for details.
 
 
 ## Tech Stack
 
-### Backend
+  ### Backend
 
-- ASP.NET Core
-- SignalR
-- Sensor API
-- JWT Token
+  - ASP.NET Core
+  - SignalR
+  - Sensor API
+  - JWT Token
 
-### Frontend
+  ### Frontend
 
-- React.js
-- Fetch API
+  - SignalR
+  - React.js
+  - Fetch API
 
-### Data Management
+  ### Data Management
 
-- Entity Framework Core
-- SQL Server
+  - Entity Framework Core
+  - SQL Server (Azure)
 
-### DevOps & Infrastructure
+  ### DevOps & Infrastructure
 
-- GitHub
-- Trello
-- Azure
-- Swagger
+  - GitHub
+  - Trello
+  - Azure
+  - Swagger for API-documentation
 
 ## Setup & Installation
 
@@ -162,6 +186,6 @@ The frontend will be accessible at <http://localhost:5173/>.
 
 ### API Documentation
 
-Documentation of the API endpoints is avaiable at Swagger UI:
+Documentation of the API endpoints is available at Swagger UI:
 
 <http://localhost:5271/index.html>
