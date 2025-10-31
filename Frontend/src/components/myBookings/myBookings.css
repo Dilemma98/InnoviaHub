@@ -64,3 +64,56 @@
     margin-top: 2em;
     margin-left: 50%;
 }
+
+@media (max-width: 768px) {
+  .mainContentMyBookings {
+    width: 80%;
+    padding: 0.8em;
+    margin-bottom: 2em;
+  }
+
+  .myBookingsHeader {
+    text-align: start;
+    margin-left: 0;
+  }
+
+  .h2 {
+    text-align: start;
+    margin-left: 0;
+    font-size: 0.9em;
+  }
+
+  .myBookedResources {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: start;
+    gap: 1em;
+  }
+
+  .bookedResourceItem {
+    width: 30%;
+    max-width: 300px;
+  }
+
+  .unBookBtn {
+    margin: 0.8em auto 0;
+    font-size: 0.9em;
+    width: fit-content;
+  }
+}
+
+/* 📱 Extra liten skärm (t.ex. iPhone SE) */
+@media (max-width: 400px) {
+  .mainContentMyBookings {
+    padding: 0.6em;
+  }
+
+  .bookedResourceItem {
+    width: 100%;
+    padding: 0.8em;
+  }
+
+  .unBookBtn {
+    font-size: 0.85em;
+  }
+}

@@ -24,8 +24,8 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "http://127.0.0.1:5173/",
-                "http://localhost:5173/",
+                "http://127.0.0.1:5173",
+                "http://localhost:5173",
                 "https://purple-dune-09709a403.3.azurestaticapps.net"
             )
             .SetIsOriginAllowedToAllowWildcardSubdomains()
@@ -161,8 +161,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 // app.UseHttpsRedirection();
-app.UseRouting();
 app.UseCors("AllowReactDev");
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGet("/", () => "Backend is running 🚀");

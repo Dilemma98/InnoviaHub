@@ -1,62 +1,98 @@
 .headerAndNav {
-    border-bottom: 1px solid #858585;
+  border-bottom: 1px solid #858585;
+  padding: 1em;
 }
 
-
+/* --- Desktop layout --- */
 @media (min-width: 768px) {
-    .headerAndNav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
+  .headerAndNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-    .headerAndNav nav {
-        margin-top: 2em;
-    }
-}
+  .headerAndNav nav {
+    margin-top: 2em;
+  }
 
-.dashboard {
+  .dashboard {
     display: flex;
     justify-content: space-between;
     gap: 3em;
     padding: 2em;
-}
+  }
 
-/* To style how myBookings component 
-   looks like on startpage */
-.myBookings {
+  .myBookings {
     width: 45%;
+  }
 }
 
+/* --- Mobile layout --- */
+@media (max-width: 767px) {
+  .headerAndNav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    gap: 2em;
+  }
+
+  .myBookings {
+    width: 70%;
+    margin: auto;
+  }
+
+  .myBookings h1 {
+    font-size: 1.2em;
+    text-align: left;
+    margin-left: 0.3em;
+  }
+
+  .myBookings ul {
+    padding-left: 0.5em;
+    gap: 1em;
+    max-width: 100%;
+  }
+
+  .myBookings li {
+    min-width: 160px; /* Gör varje kort lite större på mobil */
+    font-size: 1em;
+  }
+
+  .overviewCard {
+    width: 70%;
+    height: 85vh;
+    margin:auto;
+  }
+}
+
+/* --- Gemensam styling --- */
 .myBookings h1 {
-    font-size: 1.4em;
-    margin-left: 0.5em;
-}
-
-.myBookings .h2{
-    margin-left: 0.7em;
+  font-size: 1.4em;
+  margin-left: 0.5em;
 }
 
 .myBookings ul {
-    display: flex;
-    margin-top: 1em;
-    /* Wont wrap to enable horisontal scroll instead */
-    flex-wrap: nowrap;
-    padding-left: 1.2em;
-    gap: 1.5em;
-    overflow-x: auto;
-    max-width: 90%;
-    list-style: none;
-    scrollbar-width: thin;
-    scrollbar-color: #888 #e8e8e8;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #e8e8e8;
 }
 
 .myBookings ul::-webkit-scrollbar {
-    height: 8px;  
+  height: 8px;
 }
 
 .myBookings li {
-    padding: 0.5em;
-    font-size: 0.9em;
-    margin-bottom: 0.5em;
+  padding: 0.5em;
+  font-size: 0.9em;
+  margin-bottom: 0.5em;
 }

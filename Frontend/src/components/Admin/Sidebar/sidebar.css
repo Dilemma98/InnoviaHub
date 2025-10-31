@@ -37,3 +37,17 @@
   background-color: #ffe5d9;
   color: #d85b2b;
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem;
+  }
+  
+  .sidebar ul{
+    display: flex;
+  }
+}

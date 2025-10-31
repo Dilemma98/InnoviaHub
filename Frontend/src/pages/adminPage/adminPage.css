@@ -20,3 +20,34 @@
   flex-grow: 1;
   overflow: auto;
 }
+
+@media (max-width: 1024px) {
+  .admin-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-content {
+    padding: 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .headerAndNav {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+  }
+}
+
+/* 📱 För riktigt små skärmar */
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 0.8rem;
+  }
+}
