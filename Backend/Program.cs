@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:5173",
                 "https://purple-dune-09709a403.3.azurestaticapps.net"
             )
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            // .SetIsOriginAllowedToAllowWildcardSubdomains()
             .AllowAnyHeader()
             .AllowAnyMethod()
             .WithExposedHeaders("Content-Disposition", "x-signalr-user-agent", "x-requested-with")
