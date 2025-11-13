@@ -73,7 +73,7 @@ const ChooseDateTime = ({
 
     setAssistantLoading(true);
     console.log(assistantLoading);
-    setAssistantMessage("Vänta! Ska bara dubbelkolla dina bokningar... 🤔")
+    setAssistantMessage("Vänta! Ska bara dubbelkolla dina bokningar... 🤔");
 
     // Convert backend timezone
     const startUTC = new Date(slot.startTime).toISOString();
