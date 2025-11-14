@@ -1,3 +1,176 @@
+// using Microsoft.AspNetCore.Identity;
+// using Microsoft.EntityFrameworkCore;
+// using Backend.Services;
+// using Backend.Data;
+// using InnoviaHub.Models;
+// using Microsoft.IdentityModel.Tokens;
+// using System.Text;
+// using System.Security.Claims;
+// using Microsoft.OpenApi.Models;
+// using InnoviaHub.Hubs;
+// using System.Net.Http.Headers;
+// using DotNetEnv;
+
+// var builder = WebApplication.CreateBuilder(args);
+
+// if (builder.Environment.IsDevelopment())
+// {
+//     Env.Load();
+// }
+
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowReactDev", policy =>
+//     {
+//         policy
+//             .WithOrigins(
+//                 "http://127.0.0.1:5173",
+//                 "http://localhost:5173",
+//                 "https://purple-dune-09709a403.3.azurestaticapps.net"
+//             )
+//             // .SetIsOriginAllowedToAllowWildcardSubdomains()
+//             .AllowAnyHeader()
+//             .AllowAnyMethod()
+//             .WithExposedHeaders("Content-Disposition", "x-signalr-user-agent", "x-requested-with")
+//             .AllowCredentials();
+
+//     });
+
+// });
+
+// builder.Configuration
+//     .AddJsonFile("appsettings.Development.json", optional: true)
+//     .AddEnvironmentVariables();
+
+// var connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+
+// if (string.IsNullOrWhiteSpace(connection))
+// {
+//     throw new Exception("Connection string 'AZURE_SQL_CONNECTIONSTRING' is missing.");
+// }
+
+// Console.WriteLine($"Connection string in Azure: '{Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")}'");
+
+// builder.Services.AddDbContext<InnoviaHubDB>(options =>
+//     options.UseSqlServer(connection));
+
+// // builder.Services.AddHttpClient();
+// builder.Services.AddScoped<VirtualAssistantService>();
+
+// builder.Services.AddIdentity<User, IdentityRole>()
+//     .AddEntityFrameworkStores<InnoviaHubDB>()
+//     .AddDefaultTokenProviders();
+
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = "JwtBearer";
+//     options.DefaultChallengeScheme = "JwtBearer";
+// })
+// .AddJwtBearer("JwtBearer", options =>
+// {
+//     options.TokenValidationParameters = new TokenValidationParameters
+//     {
+//         ValidateIssuerSigningKey = true,
+//         IssuerSigningKey = new SymmetricSecurityKey(
+//             Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!)
+//         ),
+//         ValidateIssuer = false,
+//         ValidateAudience = false,
+//         RoleClaimType = ClaimTypes.Role
+//     };
+// });
+
+// //----Add OpenAI----
+// // Add HttpClient and name it "OpenAI" and setup the client, base address, authorization and content type
+// builder.Services.AddHttpClient("OpenAI", client =>
+// {
+//     client.BaseAddress = new Uri("https://api.openai.com/v1/");
+//     // Fetch API key from environment variable
+//     var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+//     // Use variable apiKey to authorize the connection
+//     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+//     // Set what type of content we want to send
+//     client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+//     Console.WriteLine($"OPENAI_API_KEY = {Environment.GetEnvironmentVariable("OPENAI_API_KEY")}");
+
+// });
+// //----End OpenAI----
+
+// builder.Services.AddSwaggerGen(c =>
+// {
+//     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
+
+//     // Lägg till JWT Bearer Auth
+//     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//     {
+//         Name = "Authorization",
+//         Type = SecuritySchemeType.ApiKey,
+//         Scheme = "Bearer",
+//         BearerFormat = "JWT",
+//         In = ParameterLocation.Header,
+//         Description = "Skriv 'Bearer' [mellanslag] och sedan din token.\n\nExempel: \"Bearer eyJhbGciOi...\""
+//     });
+
+//     c.AddSecurityRequirement(new OpenApiSecurityRequirement
+//     {
+//         {
+//             new OpenApiSecurityScheme
+//             {
+//                 Reference = new OpenApiReference
+//                 {
+//                     Type = ReferenceType.SecurityScheme,
+//                     Id = "Bearer"
+//                 }
+//             },
+//             new string[] {}
+//         }
+//     });
+// });
+
+// builder.Services.AddScoped<BookingService>();
+// builder.Services.AddScoped<AuthService>();
+// builder.Services.AddScoped<AdminUserService>();
+// builder.Services.AddScoped<AdminBookingService>();
+// builder.Services.AddScoped<AdminResourceService>();
+// builder.Services.AddControllers();
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddAuthorization();
+// builder.Services.AddSignalR();
+
+// var app = builder.Build();
+
+// if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI(options =>
+//     {
+//         options.SwaggerEndpoint("/swagger/v1/swagger.json", "InnoviaHub API V1");
+//         options.RoutePrefix = "swagger";
+//     });
+
+// }
+
+
+// // Call the timeslotSeeder
+// using (var scope = app.Services.CreateScope())
+// {
+//     var context = scope.ServiceProvider.GetRequiredService<InnoviaHubDB>();
+
+//     // Seed new timeslots
+//     TimeslotsSeeder.SeedTimeslots(context);
+// }
+
+// // app.UseHttpsRedirection();
+// app.UseCors("AllowReactDev");
+// app.UseRouting();
+// app.UseAuthentication();
+// app.UseAuthorization();
+// app.MapGet("/", () => "Backend is running 🚀");
+// app.MapControllers();
+// app.MapHub<BookingHub>("/bookinghub");
+
+
+// app.Run();
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Backend.Services;
@@ -13,6 +186,7 @@ using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load .env ONLY in development
 if (builder.Environment.IsDevelopment())
 {
     Env.Load();
@@ -28,38 +202,69 @@ builder.Services.AddCors(options =>
                 "http://localhost:5173",
                 "https://purple-dune-09709a403.3.azurestaticapps.net"
             )
-            // .SetIsOriginAllowedToAllowWildcardSubdomains()
             .AllowAnyHeader()
             .AllowAnyMethod()
             .WithExposedHeaders("Content-Disposition", "x-signalr-user-agent", "x-requested-with")
             .AllowCredentials();
-
     });
-
 });
 
+// Load config
 builder.Configuration
-    .AddJsonFile("appsettings.Development.json", optional: true)
+    .AddJsonFile("appsettings.json", optional: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
-var connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+// =======================
+//   READ ENV VARIABLES
+// =======================
 
-if (string.IsNullOrWhiteSpace(connection))
+string? connString = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
+string? jwtSecret  = Environment.GetEnvironmentVariable("JWT_SECRET");
+string? openAiKey  = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+if (string.IsNullOrWhiteSpace(connString))
 {
-    throw new Exception("Connection string 'AZURE_SQL_CONNECTIONSTRING' is missing.");
+    Console.WriteLine("❌ ERROR: Missing AZURE_SQL_CONNECTIONSTRING");
+    throw new Exception("AZURE_SQL_CONNECTIONSTRING is missing. App cannot start.");
 }
 
-Console.WriteLine($"Connection string in Azure: '{Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")}'");
+if (string.IsNullOrWhiteSpace(jwtSecret))
+{
+    Console.WriteLine("❌ ERROR: Missing JWT_SECRET");
+    throw new Exception("JWT_SECRET is missing. App cannot start.");
+}
+
+if (string.IsNullOrWhiteSpace(openAiKey))
+{
+    Console.WriteLine("⚠️ WARNING: OPENAI_API_KEY is missing. OpenAI client will not work.");
+}
+
+// Show variables in log (WITHOUT secrets)
+Console.WriteLine($"AZURE_SQL_CONNECTIONSTRING detected: {(!string.IsNullOrWhiteSpace(connString))}");
+Console.WriteLine($"JWT_SECRET detected: {(!string.IsNullOrWhiteSpace(jwtSecret))}");
+Console.WriteLine($"OPENAI_API_KEY detected: {(!string.IsNullOrWhiteSpace(openAiKey))}");
+
+// =======================
+//   DATABASE
+// =======================
 
 builder.Services.AddDbContext<InnoviaHubDB>(options =>
-    options.UseSqlServer(connection));
+    options.UseSqlServer(connString));
 
-// builder.Services.AddHttpClient();
 builder.Services.AddScoped<VirtualAssistantService>();
+
+// =======================
+//   IDENTITY
+// =======================
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<InnoviaHubDB>()
     .AddDefaultTokenProviders();
+
+// =======================
+//   AUTH + JWT
+// =======================
 
 builder.Services.AddAuthentication(options =>
 {
@@ -71,36 +276,34 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!)
-        ),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
         ValidateIssuer = false,
         ValidateAudience = false,
         RoleClaimType = ClaimTypes.Role
     };
 });
 
-//----Add OpenAI----
-// Add HttpClient and name it "OpenAI" and setup the client, base address, authorization and content type
+// =======================
+//   OPENAI HTTP CLIENT
+// =======================
+
 builder.Services.AddHttpClient("OpenAI", client =>
 {
     client.BaseAddress = new Uri("https://api.openai.com/v1/");
-    // Fetch API key from environment variable
-    var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-    // Use variable apiKey to authorize the connection
-    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-    // Set what type of content we want to send
-    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-    Console.WriteLine($"OPENAI_API_KEY = {Environment.GetEnvironmentVariable("OPENAI_API_KEY")}");
+    if (!string.IsNullOrWhiteSpace(openAiKey))
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openAiKey);
 
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 });
-//----End OpenAI----
+
+// =======================
+//   SWAGGER
+// =======================
 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
 
-    // Lägg till JWT Bearer Auth
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -108,7 +311,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Skriv 'Bearer' [mellanslag] och sedan din token.\n\nExempel: \"Bearer eyJhbGciOi...\""
+        Description = "Skriv 'Bearer <token>'"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -122,10 +325,14 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            new string[]{}
         }
     });
 });
+
+// =======================
+//   OTHER SERVICES
+// =======================
 
 builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<AuthService>();
@@ -147,27 +354,29 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "InnoviaHub API V1");
         options.RoutePrefix = "swagger";
     });
-
 }
 
+// =======================
+//   DATABASE SEEDING
+// =======================
 
-// Call the timeslotSeeder
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<InnoviaHubDB>();
-
-    // Seed new timeslots
     TimeslotsSeeder.SeedTimeslots(context);
 }
 
-// app.UseHttpsRedirection();
+// =======================
+//   PIPELINE
+// =======================
+
 app.UseCors("AllowReactDev");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapGet("/", () => "Backend is running 🚀");
 app.MapControllers();
 app.MapHub<BookingHub>("/bookinghub");
-
 
 app.Run();
