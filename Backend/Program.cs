@@ -370,8 +370,8 @@ using (var scope = app.Services.CreateScope())
 //   PIPELINE
 // =======================
 
-app.UseRouting();
 app.UseCors("AllowReactDev");
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
